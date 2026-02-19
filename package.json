@@ -1,0 +1,24 @@
+{
+  "name": "oneapi",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "webapp",
+    "core",
+    "types",
+    "scanner",
+    "server",
+    "sdk",
+    "bridge"
+  ],
+  "scripts": {
+    "scan": "tsx scanner/src/index.ts webapp/src core/src/generated",
+    "dev:server": "tsx server/src/index.ts",
+    "dev": "npm run scan && concurrently \"npm run dev:server\" \"npm run dev --workspace=webapp\"",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "tsx": "^4.19.2"
+  }
+}
