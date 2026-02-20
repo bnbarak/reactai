@@ -2,7 +2,19 @@
   "name": "scanner",
   "version": "1.0.0",
   "type": "module",
+  "bin": {
+    "react-ai-scan": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
+    "build": "tsup",
     "test": "vitest run"
   },
   "dependencies": {
@@ -11,6 +23,7 @@
     "zod-to-json-schema": "^3.24.5"
   },
   "devDependencies": {
+    "tsup": "^8.5.0",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"
   }
