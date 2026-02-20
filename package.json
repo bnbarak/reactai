@@ -3,17 +3,18 @@
   "version": "1.0.0",
   "private": true,
   "workspaces": [
-    "webapp",
+    "demo/webapp",
+    "demo/server",
     "core",
     "types",
     "scanner",
-    "server",
     "sdk",
     "bridge"
   ],
   "scripts": {
-    "scan": "tsx scanner/src/index.ts webapp/src core/src/generated",
-    "dev:server": "tsx server/src/index.ts",
+    "scan": "tsx scanner/src/index.ts demo/webapp/src core/src/generated",
+    "demo:server": "tsx demo/server/src/index.ts",
+    "demo:webapp": "npm run dev --workspace=webapp",
     "dev": "npm run scan && concurrently \"npm run dev:server\" \"npm run dev --workspace=webapp\"",
     "test": "npm run test --workspaces --if-present"
   },

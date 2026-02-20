@@ -10,7 +10,7 @@ import { createSessionsRouter } from './routes/sessions.js'
 import { createPatchesRouter } from './routes/patches.js'
 import { createSseRouter } from './routes/sse.js'
 import { createAiRouter, type AiSdkLike } from './routes/ai.js'
-import type { ComponentManifest } from '../../core/src/types.js'
+import type { ComponentManifest } from '../../../core/src/types.js'
 
 export interface AppOptions {
   manifests?: ComponentManifest[]
@@ -46,7 +46,7 @@ if (isMain) {
   if (!apiKey) throw new Error('ANTHROPIC_API_KEY environment variable is required')
 
   const { default: Anthropic } = await import('@anthropic-ai/sdk')
-  const { ReactAiSdk } = await import('../../sdk/src/ReactAiSdk.js')
+  const { ReactAiSdk } = await import('../../../sdk/src/ReactAiSdk.js')
 
   let manifests: ComponentManifest[] = []
   try {

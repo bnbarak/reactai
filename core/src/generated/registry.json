@@ -2,7 +2,7 @@
   {
     "key": "app-layout",
     "description": "The main application layout with page navigation. Controls which page is displayed.",
-    "filePath": "/Users/barak/reactAI/webapp/src/components/AppLayout.tsx",
+    "filePath": "/Users/barak/reactAI/demo/webapp/src/components/AppLayout.tsx",
     "aiWritableProps": [
       "activePage"
     ],
@@ -28,7 +28,7 @@
   {
     "key": "demo-banner",
     "description": "A banner component with a headline and light/dark theme support.",
-    "filePath": "/Users/barak/reactAI/webapp/src/components/DemoBanner.tsx",
+    "filePath": "/Users/barak/reactAI/demo/webapp/src/components/DemoBanner.tsx",
     "aiWritableProps": [
       "headline",
       "theme"
@@ -57,7 +57,7 @@
   {
     "key": "demo-card",
     "description": "A card component that displays a title, body text, and CTA button.",
-    "filePath": "/Users/barak/reactAI/webapp/src/components/DemoCard.tsx",
+    "filePath": "/Users/barak/reactAI/demo/webapp/src/components/DemoCard.tsx",
     "aiWritableProps": [
       "title",
       "body",
@@ -86,7 +86,7 @@
   {
     "key": "portfolio-chart",
     "description": "A line chart showing portfolio total value over the past 12 months.",
-    "filePath": "/Users/barak/reactAI/webapp/src/components/PortfolioChart.tsx",
+    "filePath": "/Users/barak/reactAI/demo/webapp/src/components/PortfolioChart.tsx",
     "aiWritableProps": [
       "title"
     ],
@@ -107,7 +107,7 @@
   {
     "key": "portfolio-header",
     "description": "Portfolio page header showing total value, a headline, and optional commentary.",
-    "filePath": "/Users/barak/reactAI/webapp/src/components/PortfolioHeader.tsx",
+    "filePath": "/Users/barak/reactAI/demo/webapp/src/components/PortfolioHeader.tsx",
     "aiWritableProps": [
       "headline",
       "description"
@@ -132,7 +132,7 @@
   {
     "key": "stock-position",
     "description": "A single stock position row in the portfolio showing ticker, price, and daily change.",
-    "filePath": "/Users/barak/reactAI/webapp/src/components/StockPosition.tsx",
+    "filePath": "/Users/barak/reactAI/demo/webapp/src/components/StockPosition.tsx",
     "aiWritableProps": [
       "ticker",
       "companyName",
@@ -173,7 +173,7 @@
   {
     "key": "tictactoe-board",
     "description": "A self-contained Tic-Tac-Toe game board. The AI can make moves by patching the board array and set a custom status message.",
-    "filePath": "/Users/barak/reactAI/webapp/src/components/TicTacToeBoard.tsx",
+    "filePath": "/Users/barak/reactAI/demo/webapp/src/components/TicTacToeBoard.tsx",
     "aiWritableProps": [
       "board",
       "statusMessage"

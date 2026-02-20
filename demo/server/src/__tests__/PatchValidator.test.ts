@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { PatchValidator } from '../PatchValidator.js'
-import type { ComponentManifest } from '../../../core/src/types.js'
+import type { ComponentManifest } from '../../../../core/src/types.js'
 
 describe('PatchValidator', () => {
   describe('validate', () => {

@@ -1,5 +1,5 @@
 import type { Response } from 'express'
-import type { SseEvent } from '../../core/src/types.js'
+import type { SseEvent } from '../../../core/src/types.js'
 
 export class SseManager {
   private clients = new Map<string, Response[]>()

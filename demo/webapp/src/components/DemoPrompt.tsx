@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react'
-import { useSession } from '../../../bridge/src/SessionContext.js'
+import { useSession } from '../../../../bridge/src/SessionContext.js'
 
 const SERVER_URL = 'http://localhost:3001'
 

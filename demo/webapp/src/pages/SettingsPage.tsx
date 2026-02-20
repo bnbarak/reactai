@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useStateWithAi } from '../../../../bridge/src/useStateWithAi.js'
 import { SettingsProfile } from '../components/SettingsProfile.js'
 
 type Tab = 'profile' | 'notifications' | 'appearance'
@@ -6,17 +7,23 @@ type Tab = 'profile' | 'notifications' | 'appearance'
 const TABS: Tab[] = ['profile', 'notifications', 'appearance']
 
 export const SettingsPage = () => {
-  const [tab, setTab] = useState<Tab>('profile')
+  const [state, setState, aiRef] = useStateWithAi(
+    'Settings tab navigation',
+    { activeTab: 'profile' as Tab },
+    { activeTab: TABS },
+  )
+
+  const tab = state.activeTab
 
   return (
-    <div style={{ padding: 40, maxWidth: 560 }}>
+    <div ref={aiRef as React.RefObject<HTMLDivElement>} style={{ padding: 40, maxWidth: 560 }}>
       <h2 style={{ margin: '0 0 24px', fontFamily: 'monospace', fontSize: 18 }}>Settings</h2>
 
       <div style={{ display: 'flex', borderBottom: '1px solid black', marginBottom: 32 }}>
         {TABS.map((t) => (
           <button
             key={t}
-            onClick={() => setTab(t)}
+            onClick={() => setState({ activeTab: t })}
             style={{
               padding: '8px 20px',
               border: 'none',

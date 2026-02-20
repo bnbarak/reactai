@@ -1,4 +1,4 @@
-import { SessionProvider } from '../../bridge/src/SessionContext.js'
+import { SessionProvider } from '../../../bridge/src/SessionContext.js'
 import { LoadingProvider } from './LoadingContext.js'
 import { DebugProvider } from './DebugContext.js'
 import { ChatPanel } from './components/ChatPanel.js'

@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import type { SessionStore } from '../SessionStore.js'
 import type { SseManager } from '../SseManager.js'
-import type { ComponentManifest, MountedInstance, JsonSchema } from '../../../core/src/types.js'
+import type { ComponentManifest, MountedInstance, JsonSchema } from '../../../../core/src/types.js'
 
 export interface AiSdkLike {
   updateFromPrompt(

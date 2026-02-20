@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import request from 'supertest'
 import { createApp } from '../index.js'
-import type { ComponentManifest, MountedInstance } from '../../../core/src/types.js'
+import type { ComponentManifest, MountedInstance } from '../../../../core/src/types.js'
 
 describe('routes', () => {
   describe('GET /api/registry', () => {

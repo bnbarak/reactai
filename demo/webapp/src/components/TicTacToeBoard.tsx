@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { reactAI } from '../../../bridge/src/reactAI.js'
+import { reactAI } from '../../../../bridge/src/reactAI.js'
 
 function calculateWinner(board: string[]): string | null {
   const lines = [

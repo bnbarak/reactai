@@ -1,4 +1,4 @@
-import type { ComponentManifest } from '../../core/src/types.js'
+import type { ComponentManifest } from '../../../core/src/types.js'
 
 export interface ValidationResult {
   valid: boolean

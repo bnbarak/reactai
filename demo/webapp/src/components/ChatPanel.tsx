@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
-import { useSession } from '../../../bridge/src/SessionContext.js'
-import { snapshotRegistry } from '../../../bridge/src/SnapshotRegistry.js'
-import { markerRegistry } from '../../../bridge/src/MarkerRegistry.js'
-import { extractAccessibilityTree } from '../../../bridge/src/AccessibilityTreeExtractor.js'
+import { useSession } from '../../../../bridge/src/SessionContext.js'
+import { snapshotRegistry } from '../../../../bridge/src/SnapshotRegistry.js'
+import { markerRegistry } from '../../../../bridge/src/MarkerRegistry.js'
+import { extractAccessibilityTree } from '../../../../bridge/src/AccessibilityTreeExtractor.js'
 import { useLoading } from '../LoadingContext.js'
 import { useDebug } from '../DebugContext.js'
 
 const SERVER_URL = 'http://localhost:3001'
 const MAX_TURNS = 4
+const INTER_TURN_DELAY_MS = 300
 
 interface Message {
   role: 'user' | 'assistant'
@@ -63,7 +64,7 @@ export const ChatPanel = () => {
         }
 
         isDone = data.isDone ?? true
-        if (!isDone) await new Promise((r) => setTimeout(r, 100))
+        if (!isDone) await new Promise((r) => setTimeout(r, INTER_TURN_DELAY_MS))
       }
     } catch (err) {
       const error = err instanceof Error ? err.message : 'network error'
