@@ -2,6 +2,26 @@
 
 This is a Java and JavaScript workspace project.
 
+## React Component Convention
+
+All React components must use an interface for props and `export const` arrow function syntax:
+
+```tsx
+interface MyComp {
+  title: string
+  count?: number
+}
+
+export const MyComp = ({ title, count }: MyComp) => {
+  return <div>{title}</div>
+}
+```
+
+- Props interface name matches the component name
+- No-props components: `export const MyComp = () => { ... }`
+- Inner (non-exported) components follow the same rule: `const MyInner = ({ ... }: MyInnerProps) => { ... }`
+- Utility functions and event handlers inside a component body are exempt
+
 ## Error Handling Philosophy
 
 **Fail fast, fail loud - tight system integrity!**

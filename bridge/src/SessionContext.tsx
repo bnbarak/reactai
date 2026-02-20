@@ -16,10 +16,10 @@ interface SessionProviderProps {
   serverUrl?: string
 }
 
-export function SessionProvider({
+export const SessionProvider = ({
   children,
   serverUrl = 'http://localhost:3001',
-}: SessionProviderProps) {
+}: SessionProviderProps) => {
   const [sessionId, setSessionId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -46,6 +46,4 @@ export function SessionProvider({
   )
 }
 
-export function useSession(): SessionContextValue {
-  return useContext(SessionContext)
-}
+export const useSession = (): SessionContextValue => useContext(SessionContext)

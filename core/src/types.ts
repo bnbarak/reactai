@@ -12,8 +12,10 @@ export interface ComponentManifest {
 export interface MountedInstance {
   key: string
   instanceId: string
-  contextHints?: string
   currentProps?: Record<string, unknown>
+  description?: string       // self-describing: provided by useStateWithAi
+  aiWritableProps?: string[] // self-describing: provided by useStateWithAi
+  context?: Record<string, unknown> // read-only context: enum options, ranges, labels, etc.
 }
 
 export interface PatchRequest {
@@ -36,4 +38,5 @@ export interface SdkResult {
   applied: boolean
   errors?: string[]
   reasoning?: string
+  isDone?: boolean
 }

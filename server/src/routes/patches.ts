@@ -29,8 +29,6 @@ export function createPatchesRouter(
       return
     }
 
-    sessionStore.applyPatch(sessionId, instanceId, patch)
-
     sseManager.send(sessionId, {
       type: 'patch',
       key,

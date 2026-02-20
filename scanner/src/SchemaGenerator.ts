@@ -35,6 +35,11 @@ export class SchemaGenerator {
     if (trimmed === 'number') return { type: 'number' }
     if (trimmed === 'boolean') return { type: 'boolean' }
 
+    if (trimmed.endsWith('[]')) {
+      const itemType = trimmed.slice(0, -2)
+      return { type: 'array', items: this.typeTextToSchema(itemType) }
+    }
+
     if (trimmed.includes('|')) {
       const values = trimmed
         .split('|')

@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import React from 'react'
 import type { SseEvent } from '../../../core/src/types.js'
+import { TestUtil } from './TestUtil.js'
 
 const { mockSubscribe, mockConnect, mockDisconnect } = vi.hoisted(() => ({
   mockSubscribe: vi.fn(),
@@ -46,14 +47,7 @@ describe('useAiState', () => {
 
       const { result } = renderHook(() => useAiState('demo-card', 'inst-1'))
 
-      act(() => {
-        capturedHandler!({
-          type: 'patch',
-          key: 'demo-card',
-          instanceId: 'inst-1',
-          patch: { title: 'AI Title' },
-        })
-      })
+      act(() => { capturedHandler!(TestUtil.createPatchEvent('demo-card', 'inst-1', { title: 'AI Title' })) })
 
       expect(result.current).toEqual({ title: 'AI Title' })
     })
@@ -67,14 +61,7 @@ describe('useAiState', () => {
 
       const { result } = renderHook(() => useAiState('demo-card', 'inst-1'))
 
-      act(() => {
-        capturedHandler!({
-          type: 'patch',
-          key: 'demo-card',
-          instanceId: 'inst-OTHER',
-          patch: { title: 'Should Ignore' },
-        })
-      })
+      act(() => { capturedHandler!(TestUtil.createPatchEvent('demo-card', 'inst-OTHER', { title: 'Should Ignore' })) })
 
       expect(result.current).toEqual({})
     })
@@ -88,23 +75,8 @@ describe('useAiState', () => {
 
       const { result } = renderHook(() => useAiState('demo-card', 'inst-1'))
 
-      act(() => {
-        capturedHandler!({
-          type: 'patch',
-          key: 'demo-card',
-          instanceId: 'inst-1',
-          patch: { title: 'Old' },
-        })
-      })
-
-      act(() => {
-        capturedHandler!({
-          type: 'snapshot',
-          key: 'demo-card',
-          instanceId: 'inst-1',
-          state: { title: 'Fresh', body: 'Reset' },
-        })
-      })
+      act(() => { capturedHandler!(TestUtil.createPatchEvent('demo-card', 'inst-1', { title: 'Old' })) })
+      act(() => { capturedHandler!(TestUtil.createSnapshotEvent('demo-card', 'inst-1', { title: 'Fresh', body: 'Reset' })) })
 
       expect(result.current).toEqual({ title: 'Fresh', body: 'Reset' })
     })
@@ -118,23 +90,8 @@ describe('useAiState', () => {
 
       const { result } = renderHook(() => useAiState('demo-card', 'inst-1'))
 
-      act(() => {
-        capturedHandler!({
-          type: 'patch',
-          key: 'demo-card',
-          instanceId: 'inst-1',
-          patch: { title: 'First' },
-        })
-      })
-
-      act(() => {
-        capturedHandler!({
-          type: 'patch',
-          key: 'demo-card',
-          instanceId: 'inst-1',
-          patch: { body: 'Second' },
-        })
-      })
+      act(() => { capturedHandler!(TestUtil.createPatchEvent('demo-card', 'inst-1', { title: 'First' })) })
+      act(() => { capturedHandler!(TestUtil.createPatchEvent('demo-card', 'inst-1', { body: 'Second' })) })
 
       expect(result.current).toEqual({ title: 'First', body: 'Second' })
     })

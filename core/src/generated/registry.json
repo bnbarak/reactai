@@ -1,0 +1,201 @@
+[
+  {
+    "key": "app-layout",
+    "description": "The main application layout with page navigation. Controls which page is displayed.",
+    "filePath": "/Users/barak/reactAI/webapp/src/components/AppLayout.tsx",
+    "aiWritableProps": [
+      "activePage"
+    ],
+    "propsJsonSchema": {
+      "type": "object",
+      "properties": {
+        "activePage": {
+          "type": "string",
+          "enum": [
+            "portfolio",
+            "tictactoe",
+            "settings"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "activePage"
+      ]
+    },
+    "contextSummary": "Root layout component. The activePage prop controls which page is shown."
+  },
+  {
+    "key": "demo-banner",
+    "description": "A banner component with a headline and light/dark theme support.",
+    "filePath": "/Users/barak/reactAI/webapp/src/components/DemoBanner.tsx",
+    "aiWritableProps": [
+      "headline",
+      "theme"
+    ],
+    "propsJsonSchema": {
+      "type": "object",
+      "properties": {
+        "headline": {
+          "type": "string"
+        },
+        "theme": {
+          "type": "string",
+          "enum": [
+            "light",
+            "dark"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "headline"
+      ]
+    },
+    "contextSummary": "Renders at the top of the page as the hero section."
+  },
+  {
+    "key": "demo-card",
+    "description": "A card component that displays a title, body text, and CTA button.",
+    "filePath": "/Users/barak/reactAI/webapp/src/components/DemoCard.tsx",
+    "aiWritableProps": [
+      "title",
+      "body",
+      "buttonLabel"
+    ],
+    "propsJsonSchema": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "buttonLabel": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "title"
+      ]
+    },
+    "contextSummary": "Renders inside the main content area on the home page."
+  },
+  {
+    "key": "portfolio-chart",
+    "description": "A line chart showing portfolio total value over the past 12 months.",
+    "filePath": "/Users/barak/reactAI/webapp/src/components/PortfolioChart.tsx",
+    "aiWritableProps": [
+      "title"
+    ],
+    "propsJsonSchema": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "title"
+      ]
+    },
+    "contextSummary": "Renders below the positions table on the Portfolio page."
+  },
+  {
+    "key": "portfolio-header",
+    "description": "Portfolio page header showing total value, a headline, and optional commentary.",
+    "filePath": "/Users/barak/reactAI/webapp/src/components/PortfolioHeader.tsx",
+    "aiWritableProps": [
+      "headline",
+      "description"
+    ],
+    "propsJsonSchema": {
+      "type": "object",
+      "properties": {
+        "headline": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "headline"
+      ]
+    },
+    "contextSummary": "Renders at the top of the Portfolio page above the positions table."
+  },
+  {
+    "key": "stock-position",
+    "description": "A single stock position row in the portfolio showing ticker, price, and daily change.",
+    "filePath": "/Users/barak/reactAI/webapp/src/components/StockPosition.tsx",
+    "aiWritableProps": [
+      "ticker",
+      "companyName",
+      "shares",
+      "currentPrice",
+      "changePercent"
+    ],
+    "propsJsonSchema": {
+      "type": "object",
+      "properties": {
+        "ticker": {
+          "type": "string"
+        },
+        "companyName": {
+          "type": "string"
+        },
+        "shares": {
+          "type": "number"
+        },
+        "currentPrice": {
+          "type": "number"
+        },
+        "changePercent": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "ticker",
+        "companyName",
+        "shares",
+        "currentPrice",
+        "changePercent"
+      ]
+    },
+    "contextSummary": "Renders as a card inside the positions list on the Portfolio page."
+  },
+  {
+    "key": "tictactoe-board",
+    "description": "A self-contained Tic-Tac-Toe game board. The AI can make moves by patching the board array and set a custom status message.",
+    "filePath": "/Users/barak/reactAI/webapp/src/components/TicTacToeBoard.tsx",
+    "aiWritableProps": [
+      "board",
+      "statusMessage"
+    ],
+    "propsJsonSchema": {
+      "type": "object",
+      "properties": {
+        "board": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "statusMessage": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "board"
+      ]
+    },
+    "contextSummary": "Renders as the full game on the Tic-Tac-Toe page. board is a 9-element array indexed row-major: 0=top-left, 1=top-mid, 2=top-right, 3=mid-left, 4=center, 5=mid-right, 6=bot-left, 7=bot-mid, 8=bot-right."
+  }
+]

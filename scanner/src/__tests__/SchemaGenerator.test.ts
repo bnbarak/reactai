@@ -60,6 +60,18 @@ describe('SchemaGenerator', () => {
       expect(schema.required).toBeUndefined()
     })
 
+    it('generate_stringArrayProp_returnsArraySchema', () => {
+      const generator = TestUtil.createGenerator()
+      const props = TestUtil.createProp('board', 'string[]', false)
+
+      const schema = generator.generate(props, ['board'])
+
+      expect((schema.properties as Record<string, unknown>)['board']).toEqual({
+        type: 'array',
+        items: { type: 'string' },
+      })
+    })
+
     it('generate_nonAiProp_excludesFromProperties', () => {
       const generator = TestUtil.createGenerator()
       const props = [

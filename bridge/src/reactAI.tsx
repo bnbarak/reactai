@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
-import { useSession } from './SessionContext.js'
 import { useAiState } from './useAiState.js'
+import { snapshotRegistry } from './SnapshotRegistry.js'
 
 interface ReactAiOptions {
   key: string
@@ -15,25 +15,19 @@ export function reactAI<P extends object>(
 
   function AiWrappedComponent(baseProps: P) {
     const instanceId = useRef(crypto.randomUUID()).current
-    const { sessionId, serverUrl } = useSession()
     const aiStatePatch = useAiState(key, instanceId)
 
     useEffect(() => {
-      if (!sessionId) return
-
-      fetch(`${serverUrl}/api/sessions/${sessionId}/instances`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          key,
-          instanceId,
-          currentProps: baseProps,
-        }),
-      })
-    }, [sessionId])
+      snapshotRegistry.set(instanceId, { key, state: { ...baseProps, ...aiStatePatch } as Record<string, unknown> })
+      return () => snapshotRegistry.remove(instanceId)
+    }, [aiStatePatch])
 
     const effectiveProps = { ...baseProps, ...aiStatePatch } as P
-    return <InnerComponent {...effectiveProps} />
+    return (
+      <div data-ai-id={instanceId} data-ai-key={key} style={{ display: 'contents' }}>
+        <InnerComponent {...effectiveProps} />
+      </div>
+    )
   }
 
   AiWrappedComponent.displayName = `reactAI(${InnerComponent.displayName ?? InnerComponent.name})`

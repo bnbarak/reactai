@@ -1,7 +1,8 @@
+import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import { fileURLToPath } from 'url'
-import { SessionStore } from './SessionStore.js'
+import { InMemorySessionStore } from './SessionStore.js'
 import { SseManager } from './SseManager.js'
 import { PatchValidator } from './PatchValidator.js'
 import { createRegistryRouter } from './routes/registry.js'
@@ -19,7 +20,7 @@ export interface AppOptions {
 export function createApp(options: AppOptions = {}) {
   const { manifests = [], sdk } = options
 
-  const sessionStore = new SessionStore()
+  const sessionStore = new InMemorySessionStore()
   const sseManager = new SseManager()
   const patchValidator = new PatchValidator(manifests)
 

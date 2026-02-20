@@ -17,7 +17,7 @@ interface DemoCardProps {
   onButtonClick: () => void
 }
 
-function DemoCardInner({ title, body, buttonLabel, onButtonClick }: DemoCardProps) {
+const DemoCardInner = ({ title, body, buttonLabel, onButtonClick }: DemoCardProps) => {
   return (
     <div style={{ border: '1px solid #ccc', borderRadius: 8, padding: 16, maxWidth: 400 }}>
       <h2 style={{ margin: '0 0 8px' }}>{title}</h2>

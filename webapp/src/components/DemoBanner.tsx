@@ -13,7 +13,7 @@ interface DemoBannerProps {
   theme?: 'light' | 'dark'
 }
 
-function DemoBannerInner({ headline, theme = 'light' }: DemoBannerProps) {
+const DemoBannerInner = ({ headline, theme = 'light' }: DemoBannerProps) => {
   const isDark = theme === 'dark'
   return (
     <div
