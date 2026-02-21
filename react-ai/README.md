@@ -5,7 +5,7 @@ AI-controlled React components — closed-loop prop patching via LLM.
 Send a plain-English prompt. The AI finds the right component, generates a validated patch, and React re-renders. No glue code.
 
 ```bash
-npm install @bnbarak/reactai
+npm install prop-ai
 ```
 
 ## How it works
@@ -24,7 +24,7 @@ User prompt → LLM selects component + generates patch → validated → SSE �
 ### 1. Install
 
 ```bash
-npm install @bnbarak/reactai
+npm install prop-ai
 ```
 
 ### 2. Scan your components (build step)
@@ -37,8 +37,8 @@ npx react-ai-scan src/ ./registry.json
 
 ```ts
 import express from 'express'
-import { createReactAiRouter } from '@bnbarak/reactai/server'
-import { ReactAiSdk } from '@bnbarak/reactai/sdk'
+import { createReactAiRouter } from 'prop-ai/server'
+import { ReactAiSdk } from 'prop-ai/sdk'
 import Anthropic from '@anthropic-ai/sdk'
 
 const app = express()
@@ -56,7 +56,7 @@ app.listen(3001)
 ### 4. Wrap your React app
 
 ```tsx
-import { SessionProvider } from '@bnbarak/reactai/react'
+import { SessionProvider } from 'prop-ai/react'
 
 export default function App() {
   return (
@@ -70,7 +70,7 @@ export default function App() {
 ### 5. Make a component AI-controllable
 
 ```tsx
-import { useStateWithAi } from '@bnbarak/reactai/react'
+import { useStateWithAi } from 'prop-ai/react'
 
 export const ProfileForm = () => {
   const [state, setState, aiRef] = useStateWithAi(
@@ -102,10 +102,10 @@ The component re-renders automatically.
 
 | Import | Contents |
 |--------|----------|
-| `@bnbarak/reactai/react` | `SessionProvider`, `useStateWithAi`, `useSession`, `reactAI` HOC |
-| `@bnbarak/reactai/server` | `createReactAiRouter`, `ReactAiRouterOptions`, `AiSdkLike` |
-| `@bnbarak/reactai/scanner` | `ComponentScanner`, `ManifestWriter` |
-| `@bnbarak/reactai/sdk` | `ReactAiSdk` |
+| `prop-ai/react` | `SessionProvider`, `useStateWithAi`, `useSession`, `reactAI` HOC |
+| `prop-ai/server` | `createReactAiRouter`, `ReactAiRouterOptions`, `AiSdkLike` |
+| `prop-ai/scanner` | `ComponentScanner`, `ManifestWriter` |
+| `prop-ai/sdk` | `ReactAiSdk` |
 
 ## License
 
