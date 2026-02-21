@@ -1,6 +1,6 @@
 {
-  "name": "prop-ai",
-  "version": "1.0.7",
+  "name": "@bnbarak/reactai",
+  "version": "1.0.8",
   "description": "AI-controlled React components — closed-loop prop patching via LLM",
   "type": "module",
   "exports": {

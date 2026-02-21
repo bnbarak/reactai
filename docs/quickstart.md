@@ -11,16 +11,16 @@ Get reactAI running in your app in 5 minutes.
 ## 1. Install packages
 
 ```bash
-npm install prop-ai
+npm install @bnbarak/reactai
 ```
 
 That's it — one package. Use subpath imports to pull in only what you need:
 
 | Subpath | Who uses it |
 |---|---|
-| `prop-ai/react` | Your React app |
-| `prop-ai/server` | Your Express server |
-| `prop-ai/scanner` | Build step (CLI) |
+| `@bnbarak/reactai/react` | Your React app |
+| `@bnbarak/reactai/server` | Your Express server |
+| `@bnbarak/reactai/scanner` | Build step (CLI) |
 
 ## 2. Scan your components (build step)
 
@@ -47,8 +47,8 @@ npm run scan
 
 ```ts
 import express from 'express'
-import { createReactAiRouter } from 'prop-ai/server'
-import { ReactAiSdk } from 'prop-ai/sdk'
+import { createReactAiRouter } from '@bnbarak/reactai/server'
+import { ReactAiSdk } from '@bnbarak/reactai/sdk'
 import Anthropic from '@anthropic-ai/sdk'
 
 const app = express()
@@ -66,7 +66,7 @@ app.listen(3001)
 ## 4. Wrap your React app with SessionProvider
 
 ```tsx
-import { SessionProvider } from 'prop-ai/react'
+import { SessionProvider } from '@bnbarak/reactai/react'
 
 export default function App() {
   return (
@@ -82,7 +82,7 @@ export default function App() {
 **Option A — hook (no scanner needed):**
 
 ```tsx
-import { useStateWithAi } from 'prop-ai/react'
+import { useStateWithAi } from '@bnbarak/reactai/react'
 
 export const ProfileForm = () => {
   const [state, setState, aiRef] = useStateWithAi(
@@ -111,7 +111,7 @@ interface MyCardProps {
   title: string
 }
 
-import { reactAI } from 'prop-ai/react'
+import { reactAI } from '@bnbarak/reactai/react'
 
 export const AiMyCard = reactAI(MyCard, { key: 'my-card', description: 'A card component' })
 ```
