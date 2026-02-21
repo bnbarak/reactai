@@ -38,7 +38,7 @@ jobs:
       - name: Extract and verify version
         id: version
         run: |
-          VERSION=$(node -p "require('./package.json').version")
+          VERSION=$(node -p "require('./react-ai/package.json').version")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Publishing version: $VERSION"
 
@@ -53,33 +53,26 @@ jobs:
             TAG_VERSION="${{ github.ref_name }}"
             TAG_VERSION="${TAG_VERSION#v}"  # strip leading 'v'
             if [[ "$TAG_VERSION" != "$VERSION" ]]; then
-              echo "❌ Tag ${{ github.ref_name }} does not match package.json version $VERSION"
+              echo "❌ Tag ${{ github.ref_name }} does not match react-ai/package.json version $VERSION"
               exit 1
             fi
-            echo "✅ Tag matches package.json version: $VERSION"
+            echo "✅ Tag matches react-ai/package.json version: $VERSION"
           fi
 
-      - name: Type check
-        run: npm run build --workspaces --if-present
+      - name: Build
+        run: npm run build --workspace=react-ai
 
       - name: Run unit tests
         run: npm run test --workspaces --if-present
 
-      - name: Publish packages (Dry Run)
+      - name: Publish (Dry Run)
         if: ${{ github.event.inputs.dryRun == 'true' }}
         run: |
-          echo "DRY RUN: Would publish version ${{ steps.version.outputs.version }} to npm"
-          for pkg in "@reactai/core" "@reactai/scanner" "@reactai/sdk" "@reactai/server" "@reactai/react"; do
-            echo "  - $pkg@${{ steps.version.outputs.version }}"
-          done
+          echo "DRY RUN: Would publish reactai@${{ steps.version.outputs.version }} to npm"
 
-      - name: Publish packages to npm
+      - name: Publish to npm
         if: ${{ github.event.inputs.dryRun != 'true' }}
-        run: |
-          for ws in core scanner sdk server bridge; do
-            echo "Publishing @reactai/$ws..."
-            npm publish --workspace=$ws --access public --provenance
-          done
+        run: npm publish --workspace=react-ai --access public --provenance
 
       - name: Create Git tag
         if: ${{ github.event.inputs.dryRun != 'true' && github.event_name == 'workflow_dispatch' }}

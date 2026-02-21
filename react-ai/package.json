@@ -1,0 +1,53 @@
+{
+  "name": "reactai",
+  "version": "1.0.0",
+  "description": "AI-controlled React components — closed-loop prop patching via LLM",
+  "type": "module",
+  "exports": {
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js",
+      "require": "./dist/react.cjs"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js",
+      "require": "./dist/server.cjs"
+    },
+    "./scanner": {
+      "types": "./dist/scanner.d.ts",
+      "import": "./dist/scanner.js",
+      "require": "./dist/scanner.cjs"
+    },
+    "./sdk": {
+      "types": "./dist/sdk.d.ts",
+      "import": "./dist/sdk.js",
+      "require": "./dist/sdk.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "express": "^5.1.0",
+    "ts-morph": "^26.0.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/react": "^19.2.14",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
+  },
+  "keywords": ["react", "ai", "llm", "anthropic", "components"],
+  "license": "MIT"
+}
