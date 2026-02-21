@@ -72,7 +72,11 @@ jobs:
 
       - name: Publish to npm
         if: ${{ github.event.inputs.dryRun != 'true' }}
-        run: npm publish --workspace=react-ai --access public --provenance
+        run: |
+          for ws in core scanner sdk server bridge; do
+            echo "Publishing @reactai/$ws..."
+            npm publish --workspace=$ws --access public --provenance
+          done
 
       - name: Create Git tag
         if: ${{ github.event.inputs.dryRun != 'true' && github.event_name == 'workflow_dispatch' }}
