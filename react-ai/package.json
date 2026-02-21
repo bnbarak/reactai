@@ -1,6 +1,6 @@
 {
   "name": "reactai",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "AI-controlled React components — closed-loop prop patching via LLM",
   "type": "module",
   "exports": {
