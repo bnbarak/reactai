@@ -6,7 +6,6 @@ import { extractAccessibilityTree } from '../../../../bridge/src/AccessibilityTr
 import { useLoading } from '../LoadingContext.js'
 import { useDebug } from '../DebugContext.js'
 
-const SERVER_URL = 'http://localhost:3001'
 const MAX_TURNS = 4
 const INTER_TURN_DELAY_MS = 300
 
@@ -16,7 +15,7 @@ interface Message {
 }
 
 export const ChatPanel = () => {
-  const { sessionId } = useSession()
+  const { sessionId, serverUrl } = useSession()
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
   const { loading, setLoading } = useLoading()
@@ -44,7 +43,7 @@ export const ChatPanel = () => {
         const markers = markerRegistry.getAll()
         const currentUrl = window.location.href
 
-        const res = await fetch(`${SERVER_URL}/api/ai/prompt`, {
+        const res = await fetch(`${serverUrl}/ai/prompt`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ sessionId, prompt, snapshot, accessibilityTree, markers, currentUrl }),

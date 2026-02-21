@@ -1,0 +1,91 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      dryRun:
+        description: 'Dry run (skip actual publishing)'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Extract and verify version
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Publishing version: $VERSION"
+
+          # Fail if trying to publish a pre-release
+          if [[ "$VERSION" == *"-"* ]]; then
+            echo "❌ Cannot publish pre-release version to npm: $VERSION"
+            exit 1
+          fi
+
+          # If triggered by a tag, verify the tag matches package.json version
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            TAG_VERSION="${{ github.ref_name }}"
+            TAG_VERSION="${TAG_VERSION#v}"  # strip leading 'v'
+            if [[ "$TAG_VERSION" != "$VERSION" ]]; then
+              echo "❌ Tag ${{ github.ref_name }} does not match package.json version $VERSION"
+              exit 1
+            fi
+            echo "✅ Tag matches package.json version: $VERSION"
+          fi
+
+      - name: Type check
+        run: npm run build --workspaces --if-present
+
+      - name: Run unit tests
+        run: npm run test --workspaces --if-present
+
+      - name: Publish packages (Dry Run)
+        if: ${{ github.event.inputs.dryRun == 'true' }}
+        run: |
+          echo "DRY RUN: Would publish version ${{ steps.version.outputs.version }} to npm"
+          for ws in core scanner sdk server bridge; do
+            echo "  - $ws@${{ steps.version.outputs.version }}"
+          done
+
+      - name: Publish packages to npm
+        if: ${{ github.event.inputs.dryRun != 'true' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          for ws in core scanner sdk server bridge; do
+            echo "Publishing $ws..."
+            npm publish --workspace=$ws --access public
+          done
+
+      - name: Create Git tag
+        if: ${{ github.event.inputs.dryRun != 'true' && github.event_name == 'workflow_dispatch' }}
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git tag -a v${{ steps.version.outputs.version }} -m "Release version ${{ steps.version.outputs.version }}"
+          git push origin v${{ steps.version.outputs.version }}

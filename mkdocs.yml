@@ -1,0 +1,49 @@
+site_name: reactAI
+site_url: https://bnbarak.github.io/reactai/
+site_description: Let an AI model update React component state at runtime via natural language prompts.
+repo_url: https://github.com/bnbarak/reactai
+repo_name: bnbarak/reactai
+edit_uri: edit/main/docs/
+
+theme:
+  name: shadcn
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+
+plugins:
+  - search
+  - include-markdown
+
+markdown_extensions:
+  - fenced_code
+  - codehilite:
+      guess_lang: true
+      linenums: false
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - tables
+  - attr_list
+  - md_in_html
+
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - Guides:
+    - Architecture: guides/architecture.md
+    - Bridge (React): guides/bridge.md
+    - Server: guides/server.md
+    - Scanner: guides/scanner.md
+    - SDK: guides/sdk.md

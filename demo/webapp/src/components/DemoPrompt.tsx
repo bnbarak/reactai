@@ -1,10 +1,8 @@
 import { useState, useContext } from 'react'
 import { useSession } from '../../../../bridge/src/SessionContext.js'
 
-const SERVER_URL = 'http://localhost:3001'
-
 export function DemoPrompt() {
-  const { sessionId } = useSession()
+  const { sessionId, serverUrl } = useSession()
   const [prompt, setPrompt] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [lastResult, setLastResult] = useState<string | null>(null)
@@ -16,7 +14,7 @@ export function DemoPrompt() {
     setStatus('loading')
     setLastResult(null)
 
-    const res = await fetch(`${SERVER_URL}/api/ai/prompt`, {
+    const res = await fetch(`${serverUrl}/ai/prompt`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sessionId, prompt }),

@@ -1,7 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
+import express from 'express'
 import request from 'supertest'
-import { createApp } from '../index.js'
-import type { ComponentManifest, MountedInstance } from '../../../../core/src/types.js'
+import { createReactAiRouter } from '../router.js'
+import type { ComponentManifest, MountedInstance } from '../../../core/src/types.js'
 
 describe('routes', () => {
   describe('GET /api/registry', () => {
@@ -267,8 +268,11 @@ const TestUtil = {
     currentProps: { title: 'Hello' },
   }),
 
-  createApp: (manifests: ComponentManifest[] = [], sdk?: unknown) =>
-    createApp({ manifests, sdk: sdk as never }),
+  createApp: (manifests: ComponentManifest[] = [], sdk?: unknown) => {
+    const app = express()
+    app.use('/api', createReactAiRouter({ manifests, sdk: sdk as never }))
+    return app
+  },
 
   createMockSdk: (overrides: Record<string, unknown> = {}) => ({
     updateFromPrompt: vi.fn().mockResolvedValue({

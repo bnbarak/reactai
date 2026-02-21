@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import type { ComponentManifest } from '../../../../core/src/types.js'
+import type { ComponentManifest } from '../../../core/src/types.js'
 
 export function createRegistryRouter(manifests: ComponentManifest[]) {
   const router = Router()

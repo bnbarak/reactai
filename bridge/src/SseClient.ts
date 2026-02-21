@@ -15,7 +15,7 @@ class SseClientManager {
   }
 
   private openConnection(sessionId: string, baseUrl: string): void {
-    const source = new EventSource(`${baseUrl}/api/sse/${sessionId}`)
+    const source = new EventSource(`${baseUrl}/sse/${sessionId}`)
 
     source.onmessage = (e: MessageEvent) => {
       const event: SseEvent = JSON.parse(e.data)

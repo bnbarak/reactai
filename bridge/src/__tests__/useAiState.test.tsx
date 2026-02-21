@@ -19,7 +19,7 @@ vi.mock('../SseClient.js', () => ({
 }))
 
 vi.mock('../SessionContext.js', () => ({
-  useSession: () => ({ sessionId: 'test-session', serverUrl: 'http://localhost:3001' }),
+  useSession: () => ({ sessionId: 'test-session', serverUrl: 'http://localhost:3001/api' }),
   SessionProvider: ({ children }: { children: React.ReactNode }) => children,
 }))
 

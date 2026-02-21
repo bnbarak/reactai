@@ -1,24 +1,8 @@
 import { Router } from 'express'
 import type { SessionStore } from '../SessionStore.js'
 import type { SseManager } from '../SseManager.js'
-import type { ComponentManifest, MountedInstance, JsonSchema } from '../../../../core/src/types.js'
-
-export interface AiSdkLike {
-  updateFromPrompt(
-    prompt: string,
-    manifests: ComponentManifest[],
-    mountedSnapshot: MountedInstance[],
-    accessibilityTree?: string,
-    markers?: Record<string, unknown>,
-    currentUrl?: string,
-  ): Promise<{
-    target: { key: string; instanceId: string } | null
-    patch: Record<string, unknown> | null
-    applied: boolean
-    errors?: string[]
-    isDone?: boolean
-  }>
-}
+import type { AiSdkLike } from '../types.js'
+import type { ComponentManifest, MountedInstance, JsonSchema } from '../../../core/src/types.js'
 
 function deriveSchema(
   currentProps: Record<string, unknown>,

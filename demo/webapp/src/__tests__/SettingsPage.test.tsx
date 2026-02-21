@@ -15,7 +15,7 @@ vi.mock('../../../../bridge/src/SseClient.js', () => ({
 }))
 
 vi.mock('../../../../bridge/src/SessionContext.js', () => ({
-  useSession: () => ({ sessionId: 'test-session', serverUrl: 'http://localhost:3001' }),
+  useSession: () => ({ sessionId: 'test-session', serverUrl: 'http://localhost:3001/api' }),
   SessionProvider: ({ children }: { children: React.ReactNode }) => children,
 }))
 
@@ -76,23 +76,19 @@ describe('SettingsPage', () => {
   })
 
   it('settingsPage_aiPatch_updatesUsernameInput', async () => {
-    let capturedHandler: ((e: SseEvent) => void) | null = null
+    const capturedHandlers: Array<(e: SseEvent) => void> = []
     mockSubscribe.mockImplementation((_: string, handler: (e: SseEvent) => void) => {
-      capturedHandler = handler
+      capturedHandlers.push(handler)
       return () => {}
     })
 
     render(<SettingsPage />)
 
-    await waitFor(() => expect(capturedHandler).not.toBeNull())
+    await waitFor(() => expect(capturedHandlers.length).toBeGreaterThan(0))
 
     act(() => {
-      capturedHandler!({
-        type: 'patch',
-        key: 'user-profile-settings',
-        instanceId: 'user-profile-settings',
-        patch: { username: 'alice' },
-      })
+      const event: SseEvent = { type: 'patch', key: 'user-profile-settings', instanceId: 'user-profile-settings', patch: { username: 'alice' } }
+      capturedHandlers.forEach((h) => h(event))
     })
 
     expect(screen.getByDisplayValue('alice')).toBeTruthy()
@@ -100,23 +96,19 @@ describe('SettingsPage', () => {
   })
 
   it('settingsPage_aiSnapshot_replacesUsernameInput', async () => {
-    let capturedHandler: ((e: SseEvent) => void) | null = null
+    const capturedHandlers: Array<(e: SseEvent) => void> = []
     mockSubscribe.mockImplementation((_: string, handler: (e: SseEvent) => void) => {
-      capturedHandler = handler
+      capturedHandlers.push(handler)
       return () => {}
     })
 
     render(<SettingsPage />)
 
-    await waitFor(() => expect(capturedHandler).not.toBeNull())
+    await waitFor(() => expect(capturedHandlers.length).toBeGreaterThan(0))
 
     act(() => {
-      capturedHandler!({
-        type: 'snapshot',
-        key: 'user-profile-settings',
-        instanceId: 'user-profile-settings',
-        state: { username: 'charlie' },
-      })
+      const event: SseEvent = { type: 'snapshot', key: 'user-profile-settings', instanceId: 'user-profile-settings', state: { username: 'charlie' } }
+      capturedHandlers.forEach((h) => h(event))
     })
 
     expect(screen.getByDisplayValue('charlie')).toBeTruthy()

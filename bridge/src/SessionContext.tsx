@@ -8,7 +8,7 @@ interface SessionContextValue {
 
 const SessionContext = createContext<SessionContextValue>({
   sessionId: null,
-  serverUrl: 'http://localhost:3001',
+  serverUrl: 'http://localhost:3001/api',
 })
 
 interface SessionProviderProps {
@@ -18,14 +18,14 @@ interface SessionProviderProps {
 
 export const SessionProvider = ({
   children,
-  serverUrl = 'http://localhost:3001',
+  serverUrl = 'http://localhost:3001/api',
 }: SessionProviderProps) => {
   const [sessionId, setSessionId] = useState<string | null>(null)
 
   useEffect(() => {
     let mounted = true
 
-    fetch(`${serverUrl}/api/sessions`, { method: 'POST' })
+    fetch(`${serverUrl}/sessions`, { method: 'POST' })
       .then((r) => r.json())
       .then(({ sessionId: id }: { sessionId: string }) => {
         if (!mounted) return
