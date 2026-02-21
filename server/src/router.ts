@@ -13,16 +13,13 @@ import type { ComponentManifest } from '../../core/src/types.js'
 
 export function createReactAiRouter(options: ReactAiRouterOptions = {}): express.Router {
   const { registryPath, manifests: inlineManifests, sdk } = options
-
   const manifests: ComponentManifest[] = inlineManifests ?? loadRegistry(registryPath)
-
   const sessionStore = new InMemorySessionStore()
   const sseManager = new SseManager()
   const patchValidator = new PatchValidator(manifests)
 
   const router = express.Router()
   router.use(express.json())
-
   router.use(createRegistryRouter(manifests))
   router.use(createSessionsRouter(sessionStore))
   router.use(createPatchesRouter(sessionStore, sseManager, patchValidator))
