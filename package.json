@@ -10,7 +10,8 @@
     "scanner",
     "sdk",
     "bridge",
-    "server"
+    "server",
+    "react-ai"
   ],
   "scripts": {
     "scan": "tsx scanner/src/cli.ts demo/webapp/src core/src/generated",

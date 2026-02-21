@@ -1,6 +1,7 @@
 {
-  "name": "@reactai/core",
+  "name": "react-ai-core",
   "version": "1.0.0",
+  "private": true,
   "type": "module",
   "main": "src/index.ts",
   "exports": {

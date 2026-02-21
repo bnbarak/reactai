@@ -1,6 +1,7 @@
 {
   "name": "demo-server",
   "version": "1.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "test": "echo \"no tests in demo-server\""
@@ -9,7 +10,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.3.1",
     "express": "^5.1.0",
-    "@reactai/server": "*"
+    "react-ai-server": "*"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
