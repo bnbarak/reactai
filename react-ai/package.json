@@ -25,6 +25,9 @@
       "require": "./dist/sdk.cjs"
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup"
   },
