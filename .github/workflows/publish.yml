@@ -68,8 +68,8 @@ jobs:
         if: ${{ github.event.inputs.dryRun == 'true' }}
         run: |
           echo "DRY RUN: Would publish version ${{ steps.version.outputs.version }} to npm"
-          for ws in core scanner sdk server bridge; do
-            echo "  - $ws@${{ steps.version.outputs.version }}"
+          for pkg in "@reactai/core" "@reactai/scanner" "@reactai/sdk" "@reactai/server" "@reactai/react"; do
+            echo "  - $pkg@${{ steps.version.outputs.version }}"
           done
 
       - name: Publish packages to npm
@@ -78,7 +78,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           for ws in core scanner sdk server bridge; do
-            echo "Publishing $ws..."
+            echo "Publishing @reactai/$ws..."
             npm publish --workspace=$ws --access public
           done
 

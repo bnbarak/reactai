@@ -86,7 +86,7 @@ The JSON Schema is derived from your TypeScript types. `string`, `number`, `bool
 The scanner also exports a programmatic API for build tool integration:
 
 ```ts
-import { ComponentScanner, ManifestWriter } from 'scanner'
+import { ComponentScanner, ManifestWriter } from '@reactai/scanner'
 
 const scanner = new ComponentScanner()
 const manifests = scanner.scan('./src')

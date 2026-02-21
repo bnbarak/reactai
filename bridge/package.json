@@ -1,5 +1,5 @@
 {
-  "name": "bridge",
+  "name": "@reactai/react",
   "version": "1.0.0",
   "type": "module",
   "scripts": {

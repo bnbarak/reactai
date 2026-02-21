@@ -10,7 +10,7 @@ Your app already has an Express server. The reactAI server is a guest, not a hos
 
 ```ts
 import express from 'express'
-import { createReactAiRouter } from 'server'
+import { createReactAiRouter } from '@reactai/server'
 import { ReactAiSdk } from '@reactai/sdk'
 import Anthropic from '@anthropic-ai/sdk'
 

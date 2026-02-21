@@ -11,8 +11,9 @@ Get reactAI running in your app in 5 minutes.
 ## 1. Install packages
 
 ```bash
-npm install server bridge
-npm install --save-dev scanner
+npm install @reactai/react          # React app
+npm install @reactai/server         # Express server
+npm install --save-dev @reactai/scanner  # Build step
 ```
 
 ## 2. Scan your components (build step)
@@ -40,7 +41,7 @@ npm run scan
 
 ```ts
 import express from 'express'
-import { createReactAiRouter } from 'server'
+import { createReactAiRouter } from '@reactai/server'
 import { ReactAiSdk } from '@reactai/sdk'
 import Anthropic from '@anthropic-ai/sdk'
 
@@ -59,7 +60,7 @@ app.listen(3001)
 ## 4. Wrap your React app with SessionProvider
 
 ```tsx
-import { SessionProvider } from 'bridge'
+import { SessionProvider } from '@reactai/react'
 
 export default function App() {
   return (
@@ -75,7 +76,7 @@ export default function App() {
 **Option A — hook (no scanner needed):**
 
 ```tsx
-import { useStateWithAi } from 'bridge'
+import { useStateWithAi } from '@reactai/react'
 
 export const ProfileForm = () => {
   const [state, setState, aiRef] = useStateWithAi(

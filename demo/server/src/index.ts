@@ -2,7 +2,7 @@ import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import { readFileSync } from 'fs'
-import { createReactAiRouter } from 'server'
+import { createReactAiRouter } from '@reactai/server'
 import type { ComponentManifest } from '../../../core/src/types.js'
 
 const apiKey = process.env.ANTHROPIC_API_KEY

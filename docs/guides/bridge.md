@@ -15,7 +15,7 @@ The bridge is how your React components become AI-controllable. It handles sessi
 Wrap your app once at the root. It creates a server session on mount and makes `sessionId` and `serverUrl` available throughout the tree.
 
 ```tsx
-import { SessionProvider } from 'bridge'
+import { SessionProvider } from '@reactai/react'
 
 export default function App() {
   return (
@@ -44,7 +44,7 @@ export default function App() {
 Drop-in replacement for `useState`. Give your state a description — the AI uses it to understand what this state represents.
 
 ```tsx
-import { useStateWithAi } from 'bridge'
+import { useStateWithAi } from '@reactai/react'
 
 export const ProfileForm = () => {
   const [state, setState, aiRef] = useStateWithAi(
@@ -88,7 +88,7 @@ Two components with the same description share the same AI key. This is intentio
 Wraps a prop-based component. The HOC applies AI patches on top of whatever props you pass in.
 
 ```tsx
-import { reactAI } from 'bridge'
+import { reactAI } from '@reactai/react'
 
 // Wrap once, use everywhere
 export const AiCard = reactAI(DemoCard, {
@@ -114,7 +114,7 @@ Each `<AiCard />` mount gets a random stable `instanceId`, so multiple cards on 
 Mark a region of the DOM with a logical name. The AI sees these markers in the accessibility tree snapshot, giving it orientation about the current page layout.
 
 ```tsx
-import { useAiMarker } from 'bridge'
+import { useAiMarker } from '@reactai/react'
 
 export const SettingsPage = () => {
   const ref = useAiMarker('settings-page')

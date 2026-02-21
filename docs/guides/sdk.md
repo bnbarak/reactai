@@ -42,7 +42,7 @@ The SDK returns `isDone: true` when the task is complete after the current turn,
 The server depends on `AiSdkLike` — not the Anthropic SDK directly. You can implement your own:
 
 ```ts
-import type { AiSdkLike } from 'server'
+import type { AiSdkLike } from '@reactai/server'
 
 class MyCustomSdk implements AiSdkLike {
   async updateFromPrompt(prompt, manifests, snapshot) {
