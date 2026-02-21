@@ -1,6 +1,7 @@
 {
   "name": "demo-server",
   "version": "1.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "test": "echo \"no tests in demo-server\""
