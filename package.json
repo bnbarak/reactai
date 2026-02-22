@@ -14,7 +14,7 @@
     "react-ai"
   ],
   "scripts": {
-    "scan": "tsx scanner/src/cli.ts demo/webapp/src core/src/generated",
+    "demo:scan": "tsx scanner/src/cli.ts demo/webapp/src core/src/generated",
     "demo:server": "tsx demo/server/src/index.ts",
     "demo:webapp": "npm run dev --workspace=webapp",
     "dev": "npm run scan && concurrently \"npm run dev:server\" \"npm run dev --workspace=webapp\"",
