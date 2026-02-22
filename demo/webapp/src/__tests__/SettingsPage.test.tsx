@@ -10,16 +10,16 @@ const { mockSubscribe, mockConnect, mockDisconnect } = vi.hoisted(() => ({
   mockDisconnect: vi.fn(),
 }))
 
-vi.mock('../../../../bridge/src/SseClient.js', () => ({
+vi.mock('@bnbarak/reactai/react', () => ({
   sseClient: { subscribe: mockSubscribe, connect: mockConnect, disconnect: mockDisconnect },
 }))
 
-vi.mock('../../../../bridge/src/SessionContext.js', () => ({
+vi.mock('@bnbarak/reactai/react', () => ({
   useSession: () => ({ sessionId: 'test-session', serverUrl: 'http://localhost:3001/api' }),
   SessionProvider: ({ children }: { children: React.ReactNode }) => children,
 }))
 
-vi.mock('../../../../bridge/src/SnapshotRegistry.js', () => ({
+vi.mock('@bnbarak/reactai/react', () => ({
   snapshotRegistry: { set: vi.fn(), remove: vi.fn(), getAll: vi.fn(() => []) },
 }))
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useStateWithAi } from '../../../../bridge/src/useStateWithAi.js'
+import { useStateWithAi } from '@bnbarak/reactai/react'
 import { SettingsProfile } from '../components/SettingsProfile.js'
 
 type Tab = 'profile' | 'notifications' | 'appearance'

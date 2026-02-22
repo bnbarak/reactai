@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { useSession } from '../../../../bridge/src/SessionContext.js'
-import { snapshotRegistry } from '../../../../bridge/src/SnapshotRegistry.js'
-import { markerRegistry } from '../../../../bridge/src/MarkerRegistry.js'
-import { extractAccessibilityTree } from '../../../../bridge/src/AccessibilityTreeExtractor.js'
+import { useSession } from '@bnbarak/reactai/react'
+import { snapshotRegistry } from '@bnbarak/reactai/react'
+import { markerRegistry } from '@bnbarak/reactai/react'
+import { extractAccessibilityTree } from '@bnbarak/reactai/react'
 import { useLoading } from '../LoadingContext.js'
 import { useDebug } from '../DebugContext.js'
 

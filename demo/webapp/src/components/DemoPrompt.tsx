@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react'
-import { useSession } from '../../../../bridge/src/SessionContext.js'
+import { useSession } from '@bnbarak/reactai/react'
 
 export function DemoPrompt() {
   const { sessionId, serverUrl } = useSession()

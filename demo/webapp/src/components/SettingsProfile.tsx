@@ -1,5 +1,5 @@
 import React from 'react'
-import { useStateWithAi } from '../../../../bridge/src/useStateWithAi.js'
+import { useStateWithAi } from '@bnbarak/reactai/react'
 
 const ROW = { display: 'flex', flexDirection: 'column' as const, gap: 4 }
 const LABEL = { fontSize: 11, letterSpacing: 1, textTransform: 'uppercase' as const, color: '#888' }

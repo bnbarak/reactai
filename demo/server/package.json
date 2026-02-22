@@ -7,10 +7,11 @@
     "test": "echo \"no tests in demo-server\""
   },
   "dependencies": {
+    "@bnbarak/reactai": "^1.0.8",
+    "@anthropic-ai/sdk": "^0.39.0",
     "cors": "^2.8.5",
     "dotenv": "^17.3.1",
-    "express": "^5.1.0",
-    "react-ai-server": "*"
+    "express": "^5.1.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

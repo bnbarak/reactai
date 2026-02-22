@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { markerRegistry } from '../../../../bridge/src/MarkerRegistry.js'
+import { markerRegistry } from '@bnbarak/reactai/react'
 import { useDebug } from '../DebugContext.js'
 
 export const DebugPanel = () => {

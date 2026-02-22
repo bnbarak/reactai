@@ -1,5 +1,5 @@
 import React from 'react'
-import { reactAI } from '../../../../bridge/src/reactAI.js'
+import { reactAI } from '@bnbarak/reactai/react'
 
 /**
  * @reactAi
