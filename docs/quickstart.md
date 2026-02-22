@@ -101,6 +101,8 @@ export const ProfileForm = () => {
 **Option B — HOC (annotate + scan):**
 
 ```tsx
+import { reactAI } from '@bnbarak/reactai/react'
+
 /**
  * @reactAi
  * @key my-card
@@ -110,8 +112,6 @@ interface MyCardProps {
   /** @reactAi Headline text */
   title: string
 }
-
-import { reactAI } from '@bnbarak/reactai/react'
 
 export const AiMyCard = reactAI(MyCard, { key: 'my-card', description: 'A card component' })
 ```

@@ -11,7 +11,7 @@ The model used is `claude-haiku-4-5-20251001` — optimised for fast, structured
 ## Usage
 
 ```ts
-import { ReactAiSdk } from '@reactai/sdk'
+import { ReactAiSdk } from '@bnbarak/reactai/sdk'
 import Anthropic from '@anthropic-ai/sdk'
 
 const sdk = new ReactAiSdk(new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }))
@@ -42,7 +42,7 @@ The SDK returns `isDone: true` when the task is complete after the current turn,
 The server depends on `AiSdkLike` — not the Anthropic SDK directly. You can implement your own:
 
 ```ts
-import type { AiSdkLike } from '@reactai/server'
+import type { AiSdkLike } from '@bnbarak/reactai/server'
 
 class MyCustomSdk implements AiSdkLike {
   async updateFromPrompt(prompt, manifests, snapshot) {
