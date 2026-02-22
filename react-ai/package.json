@@ -1,6 +1,6 @@
 {
   "name": "@bnbarak/reactai",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "AI-controlled React components — closed-loop prop patching via LLM",
   "type": "module",
   "exports": {
