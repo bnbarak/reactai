@@ -1,7 +1,8 @@
 import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
-import { createReactAiRouter, ReactAiSdk } from '@bnbarak/reactai/server'
+import { createReactAiRouter } from '@bnbarak/reactai/server'
+import { ReactAiSdk } from '@bnbarak/reactai/sdk'
 import Anthropic from '@anthropic-ai/sdk'
 import { readFileSync } from 'fs'
 
