@@ -18,15 +18,23 @@ const { mockSet, mockRemove, mockGetAll } = vi.hoisted(() => ({
 
 vi.mock('@bnbarak/reactai/react', () => ({
   sseClient: { subscribe: mockSubscribe, connect: mockConnect, disconnect: mockDisconnect },
-}))
-
-vi.mock('@bnbarak/reactai/react', () => ({
   useSession: () => ({ sessionId: 'test-session', serverUrl: 'http://localhost:3001/api' }),
   SessionProvider: ({ children }: { children: React.ReactNode }) => children,
-}))
-
-vi.mock('@bnbarak/reactai/react', () => ({
   snapshotRegistry: { set: mockSet, remove: mockRemove, getAll: mockGetAll },
+  useStateWithAi: (description: string, initialState: Record<string, unknown>) => {
+    const [state, setState] = React.useState(initialState)
+    React.useEffect(() => {
+      const key = description.toLowerCase().replace(/\s+/g, '-')
+      const unsub = mockSubscribe(key, (event: SseEvent) => {
+        if (event.type === 'patch') setState(s => ({ ...s, ...event.patch }))
+        if (event.type === 'snapshot') setState(event.state as Record<string, unknown>)
+      })
+      return unsub
+    }, [])
+    return [state, setState, { current: null }]
+  },
+  useAiMarker: vi.fn(),
+  reactAI: (Component: React.ComponentType) => Component,
 }))
 
 // motion/react uses animation which doesn't work in jsdom — stub it out

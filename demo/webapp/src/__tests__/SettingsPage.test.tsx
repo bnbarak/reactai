@@ -10,18 +10,30 @@ const { mockSubscribe, mockConnect, mockDisconnect } = vi.hoisted(() => ({
   mockDisconnect: vi.fn(),
 }))
 
-vi.mock('@bnbarak/reactai/react', () => ({
-  sseClient: { subscribe: mockSubscribe, connect: mockConnect, disconnect: mockDisconnect },
-}))
-
-vi.mock('@bnbarak/reactai/react', () => ({
-  useSession: () => ({ sessionId: 'test-session', serverUrl: 'http://localhost:3001/api' }),
-  SessionProvider: ({ children }: { children: React.ReactNode }) => children,
-}))
-
-vi.mock('@bnbarak/reactai/react', () => ({
-  snapshotRegistry: { set: vi.fn(), remove: vi.fn(), getAll: vi.fn(() => []) },
-}))
+vi.mock('@bnbarak/reactai/react', () => {
+  const toKey = (desc: string) => desc.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+  return {
+    sseClient: { subscribe: mockSubscribe, connect: mockConnect, disconnect: mockDisconnect },
+    useSession: () => ({ sessionId: 'test-session', serverUrl: 'http://localhost:3001/api' }),
+    SessionProvider: ({ children }: { children: React.ReactNode }) => children,
+    snapshotRegistry: { set: vi.fn(), remove: vi.fn(), getAll: vi.fn(() => []) },
+    useStateWithAi: (description: string, initialState: Record<string, unknown>) => {
+      const key = toKey(description)
+      const [state, setState] = React.useState(initialState)
+      React.useEffect(() => {
+        return mockSubscribe('test-session', (event: SseEvent) => {
+          if (event.type === 'patch' && event.key === key && event.instanceId === key)
+            setState(s => ({ ...s, ...event.patch }))
+          else if (event.type === 'snapshot' && event.key === key && event.instanceId === key)
+            setState(event.state as Record<string, unknown>)
+        })
+      }, [])
+      return [state, setState, { current: null }]
+    },
+    useAiMarker: vi.fn(),
+    reactAI: (Component: React.ComponentType) => Component,
+  }
+})
 
 import { SettingsPage } from '../pages/SettingsPage.js'
 
