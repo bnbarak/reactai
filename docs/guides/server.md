@@ -60,7 +60,7 @@ POST   /ai/prompt             → LLM call + SSE broadcast  (requires sdk)
 Creates a session. Called once by `SessionProvider` on mount.
 
 ```json
-// Response
+// Response — 201 Created
 { "sessionId": "550e8400-e29b-..." }
 ```
 
@@ -125,7 +125,7 @@ interface AiSdkLike {
   updateFromPrompt(
     prompt: string,
     manifests: ComponentManifest[],
-    snapshot: MountedInstance[],
+    mountedSnapshot: MountedInstance[],
     accessibilityTree?: string,
     markers?: Record<string, unknown>,
     currentUrl?: string,

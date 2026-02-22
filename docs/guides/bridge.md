@@ -111,19 +111,19 @@ Each `<AiCard />` mount gets a random stable `instanceId`, so multiple cards on 
 
 ## `useAiMarker`
 
-Mark a region of the DOM with a logical name. The AI sees these markers in the accessibility tree snapshot, giving it orientation about the current page layout.
+Register a named value the AI can see in its context snapshot. Use it to tell the AI what page or region is currently active.
 
 ```tsx
 import { useAiMarker } from '@bnbarak/reactai/react'
 
-export const SettingsPage = () => {
-  const ref = useAiMarker('settings-page')
+export const AppLayout = ({ page }: { page: string }) => {
+  useAiMarker('activePage', page)
 
-  return <div ref={ref}>...</div>
+  return <div>...</div>
 }
 ```
 
-Use markers on page containers, modal dialogs, or any region that helps the AI understand where it is in the app.
+The marker is registered on mount and removed on unmount. Pass any serialisable value — strings, numbers, or objects.
 
 ---
 

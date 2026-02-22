@@ -23,7 +23,7 @@ app.use('/api', createReactAiRouter({ registryPath: './registry.json', sdk }))
 ## What happens inside
 
 ```
-updateFromPrompt(prompt, manifests, snapshot)
+updateFromPrompt(prompt, manifests, mountedSnapshot)
   → CombinedSelector.select(prompt, manifests, snapshot)
       → one LLM call with tool_use
       → returns { key, instanceId, patch }
@@ -45,7 +45,7 @@ The server depends on `AiSdkLike` — not the Anthropic SDK directly. You can im
 import type { AiSdkLike } from '@bnbarak/reactai/server'
 
 class MyCustomSdk implements AiSdkLike {
-  async updateFromPrompt(prompt, manifests, snapshot) {
+  async updateFromPrompt(prompt, manifests, mountedSnapshot) {
     // your LLM call here
     return { target: { key: '...', instanceId: '...' }, patch: { ... }, applied: true }
   }
