@@ -5,8 +5,22 @@ import { useAiMarker } from '@bnbarak/reactai/react'
 import { TicTacToePage } from '../pages/TicTacToePage.js'
 import { PortfolioPage } from '../pages/PortfolioPage.js'
 import { SettingsPage } from '../pages/SettingsPage.js'
+import { DashboardPage } from '../pages/DashboardPage.js'
+import { KanbanPage } from '../pages/KanbanPage.js'
+import { StorePage } from '../pages/StorePage.js'
+import { MusicPage } from '../pages/MusicPage.js'
 
-type Page = 'portfolio' | 'tictactoe' | 'settings'
+type Page = 'portfolio' | 'tictactoe' | 'settings' | 'dashboard' | 'store' | 'kanban' | 'music'
+
+const PAGE_LABELS: Record<Page, string> = {
+  portfolio:  'Portfolio',
+  tictactoe:  'Tic-Tac-Toe',
+  settings:   'Settings',
+  dashboard:  'Dashboard',
+  store:      'Store',
+  kanban:     'Kanban',
+  music:      'Music',
+}
 
 /**
  * @reactAi
@@ -16,7 +30,7 @@ type Page = 'portfolio' | 'tictactoe' | 'settings'
  */
 interface AppLayoutProps {
   /** @reactAi The currently active page */
-  activePage: 'portfolio' | 'tictactoe' | 'settings'
+  activePage: Page
 }
 
 const AppLayoutInner = ({ activePage }: AppLayoutProps) => {
@@ -31,24 +45,24 @@ const AppLayoutInner = ({ activePage }: AppLayoutProps) => {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <nav style={{ display: 'flex', borderBottom: '2px solid black', flexShrink: 0 }}>
-        {(['portfolio', 'tictactoe', 'settings'] as Page[]).map((p) => (
+        {(Object.keys(PAGE_LABELS) as Page[]).map((p) => (
           <button
             key={p}
             onClick={() => setPage(p)}
             style={{
-              padding: '11px 24px',
+              padding: '4px 8px',
               border: 'none',
               borderRight: '1px solid black',
               background: page === p ? 'black' : 'white',
               color: page === p ? 'white' : 'black',
               fontFamily: 'monospace',
               cursor: 'pointer',
-              fontSize: 13,
+              fontSize: 11,
               fontWeight: page === p ? 'bold' : 'normal',
               letterSpacing: 0.5,
             }}
           >
-            {p === 'portfolio' ? 'Portfolio' : p === 'tictactoe' ? 'Tic-Tac-Toe' : 'Settings'}
+            {PAGE_LABELS[p]}
           </button>
         ))}
       </nav>
@@ -63,7 +77,13 @@ const AppLayoutInner = ({ activePage }: AppLayoutProps) => {
             transition={{ duration: 0.2, ease: 'easeOut' }}
             style={{ position: 'absolute', inset: 0, overflowY: 'auto' }}
           >
-            {page === 'portfolio' ? <PortfolioPage /> : page === 'tictactoe' ? <TicTacToePage /> : <SettingsPage />}
+            {page === 'portfolio'  ? <PortfolioPage /> :
+             page === 'tictactoe'  ? <TicTacToePage /> :
+             page === 'settings'   ? <SettingsPage /> :
+             page === 'dashboard'  ? <DashboardPage /> :
+             page === 'store'      ? <StorePage /> :
+             page === 'kanban'     ? <KanbanPage /> :
+                                     <MusicPage />}
           </motion.div>
         </AnimatePresence>
       </div>

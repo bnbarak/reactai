@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
+import { motion } from 'motion/react'
 import { useSession } from '@bnbarak/reactai/react'
 import { snapshotRegistry } from '@bnbarak/reactai/react'
 import { markerRegistry } from '@bnbarak/reactai/react'
@@ -14,18 +15,67 @@ interface Message {
   content: string
 }
 
+const PROMPT_GROUPS: Array<{ page: string; prompts: string[] }> = [
+  {
+    page: 'Portfolio',
+    prompts: [
+      'Go to Portfolio tab and change AAPL price to 210',
+      'Go to Portfolio tab and make it look like a bad week',
+    ],
+  },
+  {
+    page: 'Dashboard',
+    prompts: [
+      'Go to Dashboard tab and simulate a bad week for the metrics',
+      'Go to Dashboard tab and show a security incident alert',
+      'Go to Dashboard tab and spike Friday activity to 99',
+    ],
+  },
+  {
+    page: 'Kanban',
+    prompts: [
+      'Go to Kanban tab and move the login bug to done',
+      'Go to Kanban tab and reassign all of alice\'s tasks to bob',
+      'Go to Kanban tab and mark all high priority cards as done',
+    ],
+  },
+  {
+    page: 'Store',
+    prompts: [
+      'Go to Store tab and feature the headphones on sale for $69',
+      'Go to Store tab and run a flash sale — cut all prices 30%',
+      'Go to Store tab and change the banner to announce free shipping',
+    ],
+  },
+  {
+    page: 'Music',
+    prompts: [
+      'Go to Music tab and switch to chill mode',
+      'Go to Music tab, I\'m feeling sad — change the mood',
+      'Go to Music tab and play track 3 at volume 90',
+    ],
+  },
+]
+
 export const ChatPanel = () => {
   const { sessionId, serverUrl } = useSession()
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
   const { loading, setLoading } = useLoading()
   const { addTurn, clearTurns } = useDebug()
+  const [isRecording, setIsRecording] = useState(false)
+  const [speechSupported, setSpeechSupported] = useState(false)
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!sessionId || !input.trim() || loading) return
+  useEffect(() => {
+    setSpeechSupported(
+      typeof window !== 'undefined' &&
+      ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window),
+    )
+  }, [])
 
-    const prompt = input.trim()
+  const doSubmit = useCallback(async (prompt: string) => {
+    if (!sessionId || !prompt.trim() || loading) return
+
     setInput('')
     setMessages((prev) => [...prev, { role: 'user', content: prompt }])
     setLoading(true)
@@ -73,13 +123,41 @@ export const ChatPanel = () => {
 
     setMessages((prev) => [...prev, { role: 'assistant', content: replies.join('\n') }])
     setLoading(false)
+  }, [sessionId, serverUrl, loading])
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    doSubmit(input.trim())
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSubmit(e as unknown as React.FormEvent)
+      doSubmit(input.trim())
     }
+  }
+
+  function handleMicClick() {
+    const SpeechRecognitionCtor =
+      (window as unknown as { SpeechRecognition?: typeof SpeechRecognition }).SpeechRecognition ??
+      (window as unknown as { webkitSpeechRecognition?: typeof SpeechRecognition }).webkitSpeechRecognition
+    if (!SpeechRecognitionCtor) return
+
+    setIsRecording(true)
+    const recognition = new SpeechRecognitionCtor()
+    recognition.lang = 'en-US'
+    recognition.interimResults = false
+    recognition.maxAlternatives = 1
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      const transcript = event.results[0][0].transcript
+      setInput((prev) => (prev ? `${prev} ${transcript}` : transcript))
+      setIsRecording(false)
+    }
+
+    recognition.onerror = () => setIsRecording(false)
+    recognition.onend = () => setIsRecording(false)
+    recognition.start()
   }
 
   return (
@@ -118,36 +196,80 @@ export const ChatPanel = () => {
           gap: 8,
         }}
       >
-        {messages.length === 0 && (
-          <p style={{ color: '#999', fontSize: 12, margin: 0, lineHeight: 1.6 }}>
-            Ask me to change anything on screen. Try:
-            <br />
-            <br />
-            <em>"Go to settings and change username to alice"</em>
-            <br />
-            <em>"Change AAPL price to 210"</em>
-            <br />
-            <em>"Tell the player they're losing"</em>
-          </p>
-        )}
-        {messages.map((m, i) => (
-          <div
-            key={i}
-            style={{
-              padding: '8px 10px',
-              background: m.role === 'user' ? 'black' : '#f0f0f0',
-              color: m.role === 'user' ? 'white' : 'black',
-              fontSize: 12,
-              lineHeight: 1.5,
-              alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
-              maxWidth: '92%',
-              wordBreak: 'break-word',
-              whiteSpace: 'pre-wrap',
-            }}
-          >
-            {m.content}
+        {messages.length === 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <p style={{ color: sessionId ? '#999' : '#f0a500', fontSize: 11, margin: 0, lineHeight: 1.5 }}>
+              {sessionId ? 'Click a prompt or type your own command below.' : 'Connecting to server…'}
+            </p>
+            {PROMPT_GROUPS.map((group) => (
+              <div key={group.page}>
+                <div
+                  style={{
+                    fontSize: 10,
+                    letterSpacing: 1.2,
+                    textTransform: 'uppercase',
+                    color: '#bbb',
+                    marginBottom: 6,
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {group.page}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {group.prompts.map((prompt) => (
+                    <button
+                      key={prompt}
+                      onClick={() => doSubmit(prompt)}
+                      disabled={loading}
+                      style={{
+                        textAlign: 'left',
+                        padding: '6px 10px',
+                        border: '1px solid #e0e0e0',
+                        background: 'white',
+                        fontFamily: 'monospace',
+                        fontSize: 11,
+                        cursor: loading ? 'default' : 'pointer',
+                        color: loading ? '#bbb' : '#333',
+                        lineHeight: 1.4,
+                        transition: 'background 0.1s, border-color 0.1s',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (loading) return
+                        e.currentTarget.style.background = '#f5f5f5'
+                        e.currentTarget.style.borderColor = '#999'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'white'
+                        e.currentTarget.style.borderColor = '#e0e0e0'
+                      }}
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        ) : (
+          messages.map((m, i) => (
+            <div
+              key={i}
+              style={{
+                padding: '8px 10px',
+                background: m.role === 'user' ? 'black' : '#f0f0f0',
+                color: m.role === 'user' ? 'white' : 'black',
+                fontSize: 12,
+                lineHeight: 1.5,
+                alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
+                maxWidth: '92%',
+                wordBreak: 'break-word',
+                whiteSpace: 'pre-wrap',
+              }}
+            >
+              {m.content}
+            </div>
+          ))
+        )}
         {loading && (
           <div style={{ fontSize: 12, color: '#999', fontStyle: 'italic' }}>thinking…</div>
         )}
@@ -161,7 +283,7 @@ export const ChatPanel = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Type a command… (Enter to send)"
+          placeholder="Type or 🎤 a command… (Enter to send)"
           rows={3}
           disabled={!sessionId}
           style={{
@@ -173,22 +295,55 @@ export const ChatPanel = () => {
             outline: 'none',
           }}
         />
-        <button
-          type="submit"
-          disabled={!sessionId || loading || !input.trim()}
-          style={{
-            padding: '7px 0',
-            border: '1px solid black',
-            background: !sessionId || loading || !input.trim() ? '#eee' : 'black',
-            color: !sessionId || loading || !input.trim() ? '#999' : 'white',
-            fontFamily: 'monospace',
-            cursor: 'pointer',
-            fontSize: 12,
-            fontWeight: 'bold',
-          }}
-        >
-          {!sessionId ? 'connecting…' : loading ? 'thinking…' : 'Send'}
-        </button>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <button
+            type="submit"
+            disabled={!sessionId || loading || !input.trim()}
+            style={{
+              flex: 1,
+              padding: '7px 0',
+              border: '1px solid black',
+              background: !sessionId || loading || !input.trim() ? '#eee' : 'black',
+              color: !sessionId || loading || !input.trim() ? '#999' : 'white',
+              fontFamily: 'monospace',
+              cursor: 'pointer',
+              fontSize: 12,
+              fontWeight: 'bold',
+            }}
+          >
+            {!sessionId ? 'connecting…' : loading ? 'thinking…' : 'Send'}
+          </button>
+          {speechSupported && (
+            <button
+              type="button"
+              onClick={handleMicClick}
+              disabled={loading || isRecording}
+              style={{
+                width: 34,
+                border: '1px solid black',
+                background: isRecording ? 'black' : 'white',
+                color: isRecording ? 'white' : 'black',
+                cursor: 'pointer',
+                fontSize: 14,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              {isRecording ? (
+                <motion.span
+                  animate={{ opacity: [1, 0.3, 1] }}
+                  transition={{ duration: 0.8, repeat: Infinity }}
+                >
+                  ●
+                </motion.span>
+              ) : (
+                '🎤'
+              )}
+            </button>
+          )}
+        </div>
       </form>
     </div>
   )

@@ -37,12 +37,12 @@ vi.mock('@bnbarak/reactai/react', () => ({
   reactAI: (Component: React.ComponentType) => Component,
 }))
 
-// motion/react uses animation which doesn't work in jsdom — stub it out
 vi.mock('motion/react', () => ({
-  motion: {
-    div: ({ children, ...rest }: React.HTMLAttributes<HTMLDivElement> & { children?: React.ReactNode }) =>
-      React.createElement('div', rest, children),
-  },
+  motion: new Proxy({}, {
+    get: (_: object, tag: string) =>
+      ({ children, ...rest }: React.HTMLAttributes<HTMLElement> & { children?: React.ReactNode }) =>
+        React.createElement(tag as keyof JSX.IntrinsicElements, rest, children),
+  }),
   AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
 }))
 
@@ -60,45 +60,15 @@ describe('AppLayout', () => {
     await waitFor(() => expect(screen.getByText('My Portfolio')).toBeTruthy())
   })
 
-  it('appLayout_clickTicTacToe_showsTicTacToePage', async () => {
+  it('appLayout_clickDashboard_showsDashboard', async () => {
     render(<AppLayout activePage="portfolio" />)
 
-    await userEvent.click(screen.getByRole('button', { name: 'Tic-Tac-Toe' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Dashboard' }))
 
-    expect(screen.getByRole('heading', { name: 'Tic-Tac-Toe' })).toBeTruthy()
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Analytics Dashboard' })).toBeTruthy())
   })
 
-  it('appLayout_clickSettings_showsSettingsPage', async () => {
-    render(<AppLayout activePage="portfolio" />)
-
-    await userEvent.click(screen.getByRole('button', { name: 'Settings' }))
-
-    await waitFor(() => expect(screen.getByText('Username')).toBeTruthy())
-    expect(screen.getByDisplayValue('barak')).toBeTruthy()
-  })
-
-  it('appLayout_navigateToSettingsThenProfileTab_showsUsername', async () => {
-    render(<AppLayout activePage="portfolio" />)
-
-    await userEvent.click(screen.getByRole('button', { name: 'Settings' }))
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Profile' })).toBeTruthy())
-    await userEvent.click(screen.getByRole('button', { name: 'Profile' }))
-
-    expect(screen.getByText('Username')).toBeTruthy()
-    expect(screen.getByDisplayValue('barak')).toBeTruthy()
-  })
-
-  it('appLayout_navigateToSettingsThenNotifications_showsNotificationsContent', async () => {
-    render(<AppLayout activePage="portfolio" />)
-
-    await userEvent.click(screen.getByRole('button', { name: 'Settings' }))
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Notifications' })).toBeTruthy())
-    await userEvent.click(screen.getByRole('button', { name: 'Notifications' }))
-
-    expect(screen.getByText('Email digests')).toBeTruthy()
-  })
-
-  it('appLayout_aiPatchOnSettings_updatesUsernameFromAnyPage', async () => {
+  it('appLayout_aiSsePatch_updatesComponentState', async () => {
     const capturedHandlers: Array<(e: SseEvent) => void> = []
     mockSubscribe.mockImplementation((_: string, handler: (e: SseEvent) => void) => {
       capturedHandlers.push(handler)

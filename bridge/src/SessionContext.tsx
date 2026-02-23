@@ -25,13 +25,21 @@ export const SessionProvider = ({
   useEffect(() => {
     let mounted = true
 
-    fetch(`${serverUrl}/sessions`, { method: 'POST' })
-      .then((r) => r.json())
-      .then(({ sessionId: id }: { sessionId: string }) => {
-        if (!mounted) return
-        setSessionId(id)
-        sseClient.connect(id, serverUrl)
-      })
+    const attempt = (retriesLeft: number) => {
+      fetch(`${serverUrl}/sessions`, { method: 'POST' })
+        .then((r) => r.json())
+        .then(({ sessionId: id }: { sessionId: string }) => {
+          if (!mounted) return
+          setSessionId(id)
+          sseClient.connect(id, serverUrl)
+        })
+        .catch(() => {
+          if (!mounted || retriesLeft <= 0) return
+          setTimeout(() => attempt(retriesLeft - 1), 1500)
+        })
+    }
+
+    attempt(10)
 
     return () => {
       mounted = false
