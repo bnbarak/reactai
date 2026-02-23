@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor, render } from '@testing-library/react';
 import React from 'react';
-import type { SseEvent } from 'react-ai-core/src/types.js';
+import type { SseEvent } from 'react-ai-core';
 import { TestUtil } from './TestUtil.js';
 
 const { mockSubscribe, mockConnect, mockDisconnect } = vi.hoisted(() => ({

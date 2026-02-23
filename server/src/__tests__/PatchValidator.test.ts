@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { PatchValidator } from '../PatchValidator.js';
-import type { ComponentManifest } from 'react-ai-core/src/types.js';
+import type { ComponentManifest } from 'react-ai-core';
 
 describe('PatchValidator', () => {
   describe('validate', () => {

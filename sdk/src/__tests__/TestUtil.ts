@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import type { ComponentManifest, MountedInstance } from 'react-ai-core/src/types.js';
+import type { ComponentManifest, MountedInstance } from 'react-ai-core';
 
 export const TestUtil = {
   createManifest: (key = 'demo-card'): ComponentManifest => ({

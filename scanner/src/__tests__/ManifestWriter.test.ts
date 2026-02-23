@@ -3,7 +3,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { ManifestWriter } from '../ManifestWriter.js';
-import type { ComponentManifest } from 'react-ai-core/src/types.js';
+import type { ComponentManifest } from 'react-ai-core';
 
 describe('ManifestWriter', () => {
   describe('write', () => {

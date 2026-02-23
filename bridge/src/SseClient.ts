@@ -1,4 +1,4 @@
-import type { SseEvent } from 'react-ai-core/src/types.js';
+import type { SseEvent } from 'react-ai-core';
 
 type EventHandler = (event: SseEvent) => void;
 

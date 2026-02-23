@@ -1,4 +1,4 @@
-import type { ComponentManifest } from 'react-ai-core/src/types.js';
+import type { ComponentManifest } from 'react-ai-core';
 
 export interface ValidationResult {
   valid: boolean;

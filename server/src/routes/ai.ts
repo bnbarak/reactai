@@ -2,7 +2,7 @@ import { Router } from 'express';
 import type { SessionStore } from '../SessionStore.js';
 import type { SseManager } from '../SseManager.js';
 import type { AiSdkLike } from '../types.js';
-import type { ComponentManifest, MountedInstance, JsonSchema } from 'react-ai-core/src/types.js';
+import type { ComponentManifest, MountedInstance, JsonSchema } from 'react-ai-core';
 
 function deriveSchema(
   currentProps: Record<string, unknown>,

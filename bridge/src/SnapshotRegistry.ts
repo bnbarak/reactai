@@ -1,4 +1,4 @@
-import type { MountedInstance } from 'react-ai-core/src/types.js';
+import type { MountedInstance } from 'react-ai-core';
 
 interface SnapshotEntry {
   key: string;

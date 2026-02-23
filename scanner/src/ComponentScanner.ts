@@ -1,5 +1,5 @@
 import { Project } from 'ts-morph';
-import type { ComponentManifest } from 'react-ai-core/src/types.js';
+import type { ComponentManifest } from 'react-ai-core';
 import { SchemaGenerator, type PropSpec } from './SchemaGenerator.js';
 
 export class ComponentScanner {

@@ -1,4 +1,4 @@
-import type { ComponentManifest, MountedInstance } from 'react-ai-core/src/types.js';
+import type { ComponentManifest, MountedInstance } from 'react-ai-core';
 
 export interface AiSdkLike {
   updateFromPrompt(

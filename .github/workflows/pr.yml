@@ -24,6 +24,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build react-ai package
+        run: npm run build --workspace=react-ai
+
       - name: Type check
         run: npm run build --workspaces --if-present
 

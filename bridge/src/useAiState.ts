@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { SseEvent } from 'react-ai-core/src/types.js';
+import type { SseEvent } from 'react-ai-core';
 import { useSession } from './SessionContext.js';
 import { sseClient } from './SseClient.js';
 

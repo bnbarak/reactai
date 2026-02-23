@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import express from 'express';
 import request from 'supertest';
 import { createReactAiRouter } from '../router.js';
-import type { ComponentManifest, MountedInstance } from 'react-ai-core/src/types.js';
+import type { ComponentManifest, MountedInstance } from 'react-ai-core';
 
 describe('routes', () => {
   describe('GET /api/registry', () => {

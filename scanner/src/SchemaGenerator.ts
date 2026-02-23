@@ -1,4 +1,4 @@
-import type { JsonSchema } from 'react-ai-core/src/types.js';
+import type { JsonSchema } from 'react-ai-core';
 
 export interface PropSpec {
   name: string;

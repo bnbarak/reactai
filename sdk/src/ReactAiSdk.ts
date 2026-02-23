@@ -1,5 +1,5 @@
 import type Anthropic from '@anthropic-ai/sdk';
-import type { ComponentManifest, MountedInstance, SdkResult } from 'react-ai-core/src/types.js';
+import type { ComponentManifest, MountedInstance, SdkResult } from 'react-ai-core';
 import { CombinedSelector } from './CombinedSelector.js';
 import { PatchGenerator } from './PatchGenerator.js';
 import { RetryValidator } from './RetryValidator.js';

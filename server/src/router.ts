@@ -9,7 +9,7 @@ import { createPatchesRouter } from './routes/patches.js';
 import { createSseRouter } from './routes/sse.js';
 import { createAiRouter } from './routes/ai.js';
 import type { ReactAiRouterOptions } from './types.js';
-import type { ComponentManifest } from 'react-ai-core/src/types.js';
+import type { ComponentManifest } from 'react-ai-core';
 
 export function createReactAiRouter(options: ReactAiRouterOptions = {}): express.Router {
   const { registryPath, manifests: inlineManifests, sdk } = options;

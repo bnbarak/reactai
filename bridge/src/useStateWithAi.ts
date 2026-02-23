@@ -1,6 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import type React from 'react';
-import type { SseEvent } from 'react-ai-core/src/types.js';
+import type { SseEvent } from 'react-ai-core';
 import { useSession } from './SessionContext.js';
 import { sseClient } from './SseClient.js';
 import { snapshotRegistry } from './SnapshotRegistry.js';

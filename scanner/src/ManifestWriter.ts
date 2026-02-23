@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import type { ComponentManifest } from 'react-ai-core/src/types.js';
+import type { ComponentManifest } from 'react-ai-core';
 
 export class ManifestWriter {
   write(manifests: ComponentManifest[], outDir: string): void {

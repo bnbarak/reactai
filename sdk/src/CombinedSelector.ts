@@ -1,5 +1,5 @@
 import type Anthropic from '@anthropic-ai/sdk';
-import type { ComponentManifest, MountedInstance } from 'react-ai-core/src/types.js';
+import type { ComponentManifest, MountedInstance } from 'react-ai-core';
 import { logPrompt } from './PromptLogger.js';
 
 export interface CombinedResult {
