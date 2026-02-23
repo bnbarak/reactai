@@ -1,22 +1,22 @@
-import type { MountedInstance } from '../../core/src/types.js'
+import type { MountedInstance } from 'react-ai-core/src/types.js';
 
 interface SnapshotEntry {
-  key: string
-  state: Record<string, unknown>
-  description?: string
-  aiWritableProps?: string[]
-  context?: Record<string, unknown>
+  key: string;
+  state: Record<string, unknown>;
+  description?: string;
+  aiWritableProps?: string[];
+  context?: Record<string, unknown>;
 }
 
 class SnapshotRegistry {
-  private entries = new Map<string, SnapshotEntry>()
+  private entries = new Map<string, SnapshotEntry>();
 
   set(instanceId: string, entry: SnapshotEntry): void {
-    this.entries.set(instanceId, entry)
+    this.entries.set(instanceId, entry);
   }
 
   remove(instanceId: string): void {
-    this.entries.delete(instanceId)
+    this.entries.delete(instanceId);
   }
 
   getAll(): MountedInstance[] {
@@ -27,8 +27,8 @@ class SnapshotRegistry {
       description: e.description,
       aiWritableProps: e.aiWritableProps,
       context: e.context,
-    }))
+    }));
   }
 }
 
-export const snapshotRegistry = new SnapshotRegistry()
+export const snapshotRegistry = new SnapshotRegistry();

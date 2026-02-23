@@ -1,23 +1,25 @@
-import React from 'react'
-import { motion } from 'motion/react'
-import { useStateWithAi } from '@bnbarak/reactai/react'
+import React from 'react';
+import { motion } from 'motion/react';
+import { useStateWithAi } from '@bnbarak/reactai/react';
 
-type Mood = 'energetic' | 'chill' | 'happy' | 'sad' | 'focused'
+type Mood = 'energetic' | 'chill' | 'happy' | 'sad' | 'focused';
 
 interface MoodConfig {
-  colors: string[]
-  speed: number
+  colors: string[];
+  speed: number;
 }
 
 const MOOD_CONFIGS: Record<Mood, MoodConfig> = {
   energetic: { colors: ['#ff1744', '#ff5722', '#ff9800', '#ff1744', '#f44336'], speed: 0.3 },
-  chill:     { colors: ['#1565c0', '#1976d2', '#42a5f5', '#90caf9', '#1565c0'], speed: 1.2 },
-  happy:     { colors: ['#f9a825', '#fdd835', '#ffee58', '#f9a825', '#fbc02d'], speed: 0.5 },
-  sad:       { colors: ['#616161', '#757575', '#9e9e9e', '#616161', '#424242'], speed: 1.8 },
-  focused:   { colors: ['#1b5e20', '#2e7d32', '#43a047', '#66bb6a', '#1b5e20'], speed: 0.8 },
-}
+  chill: { colors: ['#1565c0', '#1976d2', '#42a5f5', '#90caf9', '#1565c0'], speed: 1.2 },
+  happy: { colors: ['#f9a825', '#fdd835', '#ffee58', '#f9a825', '#fbc02d'], speed: 0.5 },
+  sad: { colors: ['#616161', '#757575', '#9e9e9e', '#616161', '#424242'], speed: 1.8 },
+  focused: { colors: ['#1b5e20', '#2e7d32', '#43a047', '#66bb6a', '#1b5e20'], speed: 0.8 },
+};
 
-const BAR_BASE_HEIGHTS = [55, 80, 40, 95, 60, 75, 35, 90, 50, 70, 45, 85, 62, 78, 42, 92, 58, 68, 38, 88, 54, 72]
+const BAR_BASE_HEIGHTS = [
+  55, 80, 40, 95, 60, 75, 35, 90, 50, 70, 45, 85, 62, 78, 42, 92, 58, 68, 38, 88, 54, 72,
+];
 
 export const MusicPage = () => {
   const [player, , playerRef] = useStateWithAi(
@@ -32,29 +34,26 @@ export const MusicPage = () => {
       mood: 'energetic' as Mood,
     },
     { mood: ['energetic', 'chill', 'happy', 'sad', 'focused'] },
-  )
+  );
 
-  const [playlist, , playlistRef] = useStateWithAi(
-    'Music player playlist',
-    {
-      currentTrackIndex: 0,
-      tracks: [
-        { title: 'Neon Drift',        artist: 'Synthwave Collective', duration: '3:42' },
-        { title: 'Midnight Protocol', artist: 'Synthwave Collective', duration: '4:17' },
-        { title: 'Electric Pulse',    artist: 'Vapor Dreams',         duration: '3:55' },
-        { title: 'City of Glass',     artist: 'Vapor Dreams',         duration: '5:03' },
-        { title: 'Retrograde',        artist: 'Neon Phantom',         duration: '4:28' },
-      ],
-    },
-  )
+  const [playlist, , playlistRef] = useStateWithAi('Music player playlist', {
+    currentTrackIndex: 0,
+    tracks: [
+      { title: 'Neon Drift', artist: 'Synthwave Collective', duration: '3:42' },
+      { title: 'Midnight Protocol', artist: 'Synthwave Collective', duration: '4:17' },
+      { title: 'Electric Pulse', artist: 'Vapor Dreams', duration: '3:55' },
+      { title: 'City of Glass', artist: 'Vapor Dreams', duration: '5:03' },
+      { title: 'Retrograde', artist: 'Neon Phantom', duration: '4:28' },
+    ],
+  });
 
-  const mood = (player.mood as Mood) ?? 'energetic'
-  const moodCfg = MOOD_CONFIGS[mood]
-  const isPlaying = Boolean(player.isPlaying)
-  const volume = Number(player.volume)
-  const progress = Number(player.progress)
-  const currentIndex = Number(playlist.currentTrackIndex)
-  const tracks = playlist.tracks as Array<{ title: string; artist: string; duration: string }>
+  const mood = (player.mood as Mood) ?? 'energetic';
+  const moodCfg = MOOD_CONFIGS[mood];
+  const isPlaying = Boolean(player.isPlaying);
+  const volume = Number(player.volume);
+  const progress = Number(player.progress);
+  const currentIndex = Number(playlist.currentTrackIndex);
+  const tracks = playlist.tracks as Array<{ title: string; artist: string; duration: string }>;
 
   return (
     <div style={{ padding: 32, fontFamily: 'monospace', maxWidth: 700 }}>
@@ -67,7 +66,9 @@ export const MusicPage = () => {
         style={{ border: '2px solid black', padding: 28, marginBottom: 24 }}
       >
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 4 }}>{String(player.trackName)}</div>
+          <div style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 4 }}>
+            {String(player.trackName)}
+          </div>
           <div style={{ fontSize: 13, color: '#666' }}>
             {String(player.artist)} — {String(player.album)}
           </div>
@@ -78,7 +79,7 @@ export const MusicPage = () => {
           style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: 80, marginBottom: 24 }}
         >
           {BAR_BASE_HEIGHTS.map((peak, i) => {
-            const trough = Math.max(4, peak * 0.25)
+            const trough = Math.max(4, peak * 0.25);
             return (
               <motion.div
                 key={i}
@@ -97,7 +98,7 @@ export const MusicPage = () => {
                   flexShrink: 0,
                 }}
               />
-            )
+            );
           })}
         </div>
 
@@ -121,7 +122,15 @@ export const MusicPage = () => {
               }}
             />
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#888', marginTop: 4 }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: 11,
+              color: '#888',
+              marginTop: 4,
+            }}
+          >
             <span>{Math.floor((progress / 100) * 222)}s</span>
             <span>3:42</span>
           </div>
@@ -175,7 +184,15 @@ export const MusicPage = () => {
       </div>
 
       <div ref={playlistRef as React.RefObject<HTMLDivElement>}>
-        <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#888', marginBottom: 12 }}>
+        <div
+          style={{
+            fontSize: 11,
+            letterSpacing: 1,
+            textTransform: 'uppercase',
+            color: '#888',
+            marginBottom: 12,
+          }}
+        >
           Playlist
         </div>
         {tracks.map((track, i) => (
@@ -202,5 +219,5 @@ export const MusicPage = () => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};

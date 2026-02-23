@@ -1,5 +1,5 @@
-import React from 'react'
-import { reactAI } from '@bnbarak/reactai/react'
+import React from 'react';
+import { reactAI } from '@bnbarak/reactai/react';
 
 /**
  * @reactAi
@@ -9,11 +9,11 @@ import { reactAI } from '@bnbarak/reactai/react'
  */
 interface PortfolioHeaderProps {
   /** @reactAi Main headline for the portfolio section */
-  headline: string
+  headline: string;
   /** @reactAi Short market commentary or description shown below the total */
-  description?: string
+  description?: string;
   /** @noAI Computed total portfolio value in USD */
-  totalValue: number
+  totalValue: number;
 }
 
 const PortfolioHeaderInner = ({ headline, description, totalValue }: PortfolioHeaderProps) => {
@@ -31,7 +31,8 @@ const PortfolioHeaderInner = ({ headline, description, totalValue }: PortfolioHe
           lineHeight: 1,
         }}
       >
-        ${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        $
+        {totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
       </p>
       {description && (
         <p style={{ margin: '10px 0 0', fontSize: 13, color: '#555', lineHeight: 1.5 }}>
@@ -39,10 +40,10 @@ const PortfolioHeaderInner = ({ headline, description, totalValue }: PortfolioHe
         </p>
       )}
     </div>
-  )
-}
+  );
+};
 
 export const PortfolioHeader = reactAI(PortfolioHeaderInner, {
   key: 'portfolio-header',
   description: 'Portfolio header with headline, total value, and optional market commentary.',
-})
+});

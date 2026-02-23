@@ -1,84 +1,121 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import { useStateWithAi } from '@bnbarak/reactai/react'
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { useStateWithAi } from '@bnbarak/reactai/react';
 
-type Column = 'backlog' | 'in-progress' | 'review' | 'done'
-type Priority = 'high' | 'medium' | 'low'
+type Column = 'backlog' | 'in-progress' | 'review' | 'done';
+type Priority = 'high' | 'medium' | 'low';
 
 interface CardState {
-  title: string
-  column: Column
-  priority: Priority
-  assignee: string
+  title: string;
+  column: Column;
+  priority: Priority;
+  assignee: string;
 }
 
 const PRIORITY_BADGE: Record<Priority, React.CSSProperties> = {
-  high:   { background: 'black', color: 'white' },
+  high: { background: 'black', color: 'white' },
   medium: { background: '#555', color: 'white' },
-  low:    { background: '#ddd', color: 'black' },
-}
+  low: { background: '#ddd', color: 'black' },
+};
 
-const COLUMNS: Column[] = ['backlog', 'in-progress', 'review', 'done']
+const COLUMNS: Column[] = ['backlog', 'in-progress', 'review', 'done'];
 const COLUMN_LABELS: Record<Column, string> = {
   backlog: 'Backlog',
   'in-progress': 'In Progress',
   review: 'Review',
   done: 'Done',
-}
+};
 
 interface KanbanCardProps {
-  description: string
-  initialState: CardState
-  onStateChange: (state: CardState) => void
+  description: string;
+  initialState: CardState;
+  onStateChange: (state: CardState) => void;
 }
 
 const KanbanCard = ({ description, initialState, onStateChange }: KanbanCardProps) => {
-  const [state, , aiRef] = useStateWithAi(
-    description,
-    initialState,
-    { priority: ['high', 'medium', 'low'], column: ['backlog', 'in-progress', 'review', 'done'] },
-  )
+  const [state, , aiRef] = useStateWithAi(description, initialState, {
+    priority: ['high', 'medium', 'low'],
+    column: ['backlog', 'in-progress', 'review', 'done'],
+  });
 
   useEffect(() => {
-    onStateChange(state as CardState)
-  }, [state.column, state.priority, state.assignee, state.title])
+    onStateChange(state as CardState);
+  }, [state.column, state.priority, state.assignee, state.title]);
 
-  return <div ref={aiRef as React.RefObject<HTMLDivElement>} />
-}
+  return <div ref={aiRef as React.RefObject<HTMLDivElement>} />;
+};
 
 const CARD_DEFS: Array<{ id: string; description: string; initial: CardState }> = [
-  { id: 'login-bug',   description: 'Kanban card login bug',         initial: { title: 'Login Bug',         column: 'in-progress', priority: 'high',   assignee: 'alice' } },
-  { id: 'pwd-reset',   description: 'Kanban card password reset',    initial: { title: 'Password Reset',    column: 'backlog',     priority: 'medium', assignee: 'bob'   } },
-  { id: 'dash-charts', description: 'Kanban card dashboard charts',  initial: { title: 'Dashboard Charts',  column: 'review',      priority: 'medium', assignee: 'carol' } },
-  { id: 'mobile-nav',  description: 'Kanban card mobile nav',        initial: { title: 'Mobile Nav',        column: 'backlog',     priority: 'low',    assignee: 'alice' } },
-  { id: 'api-rate',    description: 'Kanban card api rate limiting', initial: { title: 'API Rate Limiting', column: 'in-progress', priority: 'high',   assignee: 'bob'   } },
-  { id: 'dark-mode',   description: 'Kanban card dark mode',         initial: { title: 'Dark Mode',         column: 'backlog',     priority: 'low',    assignee: 'carol' } },
-  { id: 'unit-tests',  description: 'Kanban card unit tests',        initial: { title: 'Unit Tests',        column: 'done',        priority: 'medium', assignee: 'dave'  } },
-  { id: 'ci-pipeline', description: 'Kanban card ci pipeline',       initial: { title: 'CI Pipeline',       column: 'review',      priority: 'high',   assignee: 'dave'  } },
-]
+  {
+    id: 'login-bug',
+    description: 'Kanban card login bug',
+    initial: { title: 'Login Bug', column: 'in-progress', priority: 'high', assignee: 'alice' },
+  },
+  {
+    id: 'pwd-reset',
+    description: 'Kanban card password reset',
+    initial: { title: 'Password Reset', column: 'backlog', priority: 'medium', assignee: 'bob' },
+  },
+  {
+    id: 'dash-charts',
+    description: 'Kanban card dashboard charts',
+    initial: { title: 'Dashboard Charts', column: 'review', priority: 'medium', assignee: 'carol' },
+  },
+  {
+    id: 'mobile-nav',
+    description: 'Kanban card mobile nav',
+    initial: { title: 'Mobile Nav', column: 'backlog', priority: 'low', assignee: 'alice' },
+  },
+  {
+    id: 'api-rate',
+    description: 'Kanban card api rate limiting',
+    initial: {
+      title: 'API Rate Limiting',
+      column: 'in-progress',
+      priority: 'high',
+      assignee: 'bob',
+    },
+  },
+  {
+    id: 'dark-mode',
+    description: 'Kanban card dark mode',
+    initial: { title: 'Dark Mode', column: 'backlog', priority: 'low', assignee: 'carol' },
+  },
+  {
+    id: 'unit-tests',
+    description: 'Kanban card unit tests',
+    initial: { title: 'Unit Tests', column: 'done', priority: 'medium', assignee: 'dave' },
+  },
+  {
+    id: 'ci-pipeline',
+    description: 'Kanban card ci pipeline',
+    initial: { title: 'CI Pipeline', column: 'review', priority: 'high', assignee: 'dave' },
+  },
+];
 
-type CardStatesMap = Record<string, CardState>
+type CardStatesMap = Record<string, CardState>;
 
 export const KanbanPage = () => {
   const [cardStates, setCardStates] = useState<CardStatesMap>(() =>
     Object.fromEntries(CARD_DEFS.map((c) => [c.id, c.initial])),
-  )
+  );
 
   const makeOnStateChange = useCallback(
     (cardId: string) => (state: CardState) => {
       setCardStates((prev) => {
-        const cur = prev[cardId]
+        const cur = prev[cardId];
         if (
           cur.column === state.column &&
           cur.priority === state.priority &&
           cur.assignee === state.assignee &&
           cur.title === state.title
-        ) return prev
-        return { ...prev, [cardId]: state }
-      })
+        )
+          return prev;
+        return { ...prev, [cardId]: state };
+      });
     },
     [],
-  )
+  );
 
   return (
     <div style={{ padding: 32, fontFamily: 'monospace' }}>
@@ -86,9 +123,16 @@ export const KanbanPage = () => {
         Kanban Board
       </h2>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'start' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: 16,
+          alignItems: 'start',
+        }}
+      >
         {COLUMNS.map((col) => {
-          const cards = CARD_DEFS.filter((c) => cardStates[c.id].column === col)
+          const cards = CARD_DEFS.filter((c) => cardStates[c.id].column === col);
           return (
             <div key={col}>
               <div
@@ -110,7 +154,7 @@ export const KanbanPage = () => {
               <div style={{ minHeight: 60 }}>
                 <AnimatePresence>
                   {cards.map((c) => {
-                    const s = cardStates[c.id]
+                    const s = cardStates[c.id];
                     return (
                       <motion.div
                         key={c.id}
@@ -119,10 +163,23 @@ export const KanbanPage = () => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 12 }}
                         transition={{ duration: 0.22 }}
-                        style={{ background: 'white', border: '1px solid #ddd', padding: 12, marginBottom: 8 }}
+                        style={{
+                          background: 'white',
+                          border: '1px solid #ddd',
+                          padding: 12,
+                          marginBottom: 8,
+                        }}
                       >
-                        <div style={{ fontSize: 13, fontWeight: 'bold', marginBottom: 8 }}>{s.title}</div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ fontSize: 13, fontWeight: 'bold', marginBottom: 8 }}>
+                          {s.title}
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
                           <span
                             style={{
                               fontSize: 10,
@@ -137,12 +194,12 @@ export const KanbanPage = () => {
                           <span style={{ fontSize: 11, color: '#888' }}>{s.assignee}</span>
                         </div>
                       </motion.div>
-                    )
+                    );
                   })}
                 </AnimatePresence>
               </div>
             </div>
-          )
+          );
         })}
       </div>
 
@@ -157,5 +214,5 @@ export const KanbanPage = () => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};

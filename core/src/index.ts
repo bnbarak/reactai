@@ -5,4 +5,4 @@ export type {
   PatchRequest,
   SseEvent,
   SdkResult,
-} from './types.js'
+} from './types.js';

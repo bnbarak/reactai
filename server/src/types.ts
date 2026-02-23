@@ -1,4 +1,4 @@
-import type { ComponentManifest, MountedInstance } from '../../core/src/types.js'
+import type { ComponentManifest, MountedInstance } from 'react-ai-core/src/types.js';
 
 export interface AiSdkLike {
   updateFromPrompt(
@@ -9,16 +9,16 @@ export interface AiSdkLike {
     markers?: Record<string, unknown>,
     currentUrl?: string,
   ): Promise<{
-    target: { key: string; instanceId: string } | null
-    patch: Record<string, unknown> | null
-    applied: boolean
-    errors?: string[]
-    isDone?: boolean
-  }>
+    target: { key: string; instanceId: string } | null;
+    patch: Record<string, unknown> | null;
+    applied: boolean;
+    errors?: string[];
+    isDone?: boolean;
+  }>;
 }
 
 export interface ReactAiRouterOptions {
-  registryPath?: string
-  manifests?: ComponentManifest[]
-  sdk?: AiSdkLike
+  registryPath?: string;
+  manifests?: ComponentManifest[];
+  sdk?: AiSdkLike;
 }

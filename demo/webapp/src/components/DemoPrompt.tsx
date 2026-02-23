@@ -1,36 +1,36 @@
-import { useState, useContext } from 'react'
-import { useSession } from '@bnbarak/reactai/react'
+import { useState } from 'react';
+import { useSession } from '@bnbarak/reactai/react';
 
 export function DemoPrompt() {
-  const { sessionId, serverUrl } = useSession()
-  const [prompt, setPrompt] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
-  const [lastResult, setLastResult] = useState<string | null>(null)
+  const { sessionId, serverUrl } = useSession();
+  const [prompt, setPrompt] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [lastResult, setLastResult] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!sessionId || !prompt.trim()) return
+    e.preventDefault();
+    if (!sessionId || !prompt.trim()) return;
 
-    setStatus('loading')
-    setLastResult(null)
+    setStatus('loading');
+    setLastResult(null);
 
     const res = await fetch(`${serverUrl}/ai/prompt`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sessionId, prompt }),
-    })
+    });
 
-    const data = await res.json()
+    const data = await res.json();
 
     if (data.applied) {
-      setStatus('success')
-      setLastResult(`Applied to: ${data.target?.key} / ${data.target?.instanceId}`)
+      setStatus('success');
+      setLastResult(`Applied to: ${data.target?.key} / ${data.target?.instanceId}`);
     } else {
-      setStatus('error')
-      setLastResult(data.errors?.join(', ') ?? 'Unknown error')
+      setStatus('error');
+      setLastResult(data.errors?.join(', ') ?? 'Unknown error');
     }
 
-    setPrompt('')
+    setPrompt('');
   }
 
   return (
@@ -61,5 +61,5 @@ export function DemoPrompt() {
         <p style={{ margin: '8px 0 0', color: '#999', fontSize: 12 }}>Connecting to session…</p>
       )}
     </div>
-  )
+  );
 }

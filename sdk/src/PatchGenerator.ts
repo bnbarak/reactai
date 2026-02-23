@@ -1,6 +1,6 @@
-import type Anthropic from '@anthropic-ai/sdk'
-import type { ComponentManifest } from '../../core/src/types.js'
-import { logPrompt } from './PromptLogger.js'
+import type Anthropic from '@anthropic-ai/sdk';
+import type { ComponentManifest } from 'react-ai-core/src/types.js';
+import { logPrompt } from './PromptLogger.js';
 
 export class PatchGenerator {
   constructor(private client: Anthropic) {}
@@ -13,7 +13,7 @@ export class PatchGenerator {
   ): Promise<Record<string, unknown>> {
     const errorSection = validationError
       ? `\n\nPrevious patch was invalid: ${validationError}\nPlease fix the issues.`
-      : ''
+      : '';
 
     const userMessage = `User prompt: "${prompt}"
 
@@ -22,9 +22,9 @@ Description: ${manifest.description}
 Current state: ${JSON.stringify(currentState)}
 AI-writable props: ${manifest.aiWritableProps.join(', ')}${errorSection}
 
-Generate a patch object with only AI-writable props that satisfies the user's request.`
+Generate a patch object with only AI-writable props that satisfies the user's request.`;
 
-    logPrompt(`PatchGenerator — generate_patch (${manifest.key})`, userMessage)
+    logPrompt(`PatchGenerator — generate_patch (${manifest.key})`, userMessage);
 
     const response = await this.client.messages.create({
       model: 'claude-haiku-4-5-20251001',
@@ -37,16 +37,14 @@ Generate a patch object with only AI-writable props that satisfies the user's re
         },
       ],
       tool_choice: { type: 'tool', name: 'generate_patch' },
-      messages: [
-        { role: 'user', content: userMessage },
-      ],
-    })
+      messages: [{ role: 'user', content: userMessage }],
+    });
 
-    const toolUse = response.content.find((b) => b.type === 'tool_use')
+    const toolUse = response.content.find((b) => b.type === 'tool_use');
     if (!toolUse || toolUse.type !== 'tool_use') {
-      throw new Error('LLM did not return a tool_use block for patch generation')
+      throw new Error('LLM did not return a tool_use block for patch generation');
     }
 
-    return toolUse.input as Record<string, unknown>
+    return toolUse.input as Record<string, unknown>;
   }
 }

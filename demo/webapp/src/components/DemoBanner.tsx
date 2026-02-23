@@ -1,4 +1,4 @@
-import { reactAI } from '@bnbarak/reactai/react'
+import { reactAI } from '@bnbarak/reactai/react';
 
 /**
  * @reactAi
@@ -8,13 +8,13 @@ import { reactAI } from '@bnbarak/reactai/react'
  */
 interface DemoBannerProps {
   /** @reactAi Main headline text */
-  headline: string
+  headline: string;
   /** @reactAi Color theme of the banner */
-  theme?: 'light' | 'dark'
+  theme?: 'light' | 'dark';
 }
 
 const DemoBannerInner = ({ headline, theme = 'light' }: DemoBannerProps) => {
-  const isDark = theme === 'dark'
+  const isDark = theme === 'dark';
   return (
     <div
       style={{
@@ -27,10 +27,10 @@ const DemoBannerInner = ({ headline, theme = 'light' }: DemoBannerProps) => {
     >
       <h1 style={{ margin: 0, fontSize: '2rem' }}>{headline}</h1>
     </div>
-  )
-}
+  );
+};
 
 export const DemoBanner = reactAI(DemoBannerInner, {
   key: 'demo-banner',
   description: 'A banner component with a headline and light/dark theme support.',
-})
+});

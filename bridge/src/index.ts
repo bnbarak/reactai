@@ -1,8 +1,8 @@
-export { SessionProvider, useSession } from './SessionContext.js'
-export { reactAI } from './reactAI.js'
-export { useStateWithAi } from './useStateWithAi.js'
-export { useAiState } from './useAiState.js'
-export { useAiMarker } from './useAiMarker.js'
-export { snapshotRegistry } from './SnapshotRegistry.js'
-export { markerRegistry } from './MarkerRegistry.js'
-export { extractAccessibilityTree } from './AccessibilityTreeExtractor.js'
+export { SessionProvider, useSession } from './SessionContext.js';
+export { reactAI } from './reactAI.js';
+export { useStateWithAi } from './useStateWithAi.js';
+export { useAiState } from './useAiState.js';
+export { useAiMarker } from './useAiMarker.js';
+export { snapshotRegistry } from './SnapshotRegistry.js';
+export { markerRegistry } from './MarkerRegistry.js';
+export { extractAccessibilityTree } from './AccessibilityTreeExtractor.js';

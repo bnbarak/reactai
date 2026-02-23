@@ -1,1 +1,1 @@
-export { ReactAiSdk } from './ReactAiSdk.js'
+export { ReactAiSdk } from './ReactAiSdk.js';

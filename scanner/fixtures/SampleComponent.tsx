@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 /**
  * @reactAi
@@ -8,13 +8,13 @@ import React from 'react'
  */
 interface SampleCardProps {
   /** @reactAi Headline text shown at the top of the card */
-  title: string
+  title: string;
   /** @reactAi Optional body paragraph text */
-  body?: string
+  body?: string;
   /** @reactAi Label for the CTA button */
-  buttonLabel?: string
+  buttonLabel?: string;
   /** @noAI Internal: never writable by AI */
-  onClick: () => void
+  onClick: () => void;
 }
 
 export function SampleCard({ title, body, buttonLabel, onClick }: SampleCardProps) {
@@ -24,5 +24,5 @@ export function SampleCard({ title, body, buttonLabel, onClick }: SampleCardProp
       {body && <p>{body}</p>}
       <button onClick={onClick}>{buttonLabel ?? 'Click'}</button>
     </div>
-  )
+  );
 }

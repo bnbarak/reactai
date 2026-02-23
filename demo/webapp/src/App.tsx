@@ -1,10 +1,10 @@
-import { SessionProvider } from '@bnbarak/reactai/react'
-import { LoadingProvider } from './LoadingContext.js'
-import { DebugProvider } from './DebugContext.js'
-import { ChatPanel } from './components/ChatPanel.js'
-import { AppLayout } from './components/AppLayout.js'
-import { LoadingBar } from './components/LoadingBar.js'
-import { DebugPanel } from './components/DebugPanel.js'
+import { SessionProvider } from '@bnbarak/reactai/react';
+import { LoadingProvider } from './LoadingContext.js';
+import { DebugProvider } from './DebugContext.js';
+import { ChatPanel } from './components/ChatPanel.js';
+import { AppLayout } from './components/AppLayout.js';
+import { LoadingBar } from './components/LoadingBar.js';
+import { DebugPanel } from './components/DebugPanel.js';
 
 const App = () => {
   return (
@@ -30,7 +30,7 @@ const App = () => {
         </DebugProvider>
       </LoadingProvider>
     </SessionProvider>
-  )
-}
+  );
+};
 
-export default App
+export default App;
