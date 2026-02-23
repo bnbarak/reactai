@@ -2,7 +2,9 @@
 
 reactAI is a closed-loop system: React state → prompt → LLM → patch → React state.
 
-## The core loop
+## How it works
+
+A user types a prompt. The bridge collects a snapshot of all currently mounted AI-controllable components and posts it to the server. The server makes a single LLM call that selects the target component and produces the patch. The patch is broadcast via SSE. The matching component merges it into React state and re-renders.
 
 ```
 Mount:
@@ -32,7 +34,7 @@ A single Anthropic API call selects the target component *and* generates the pat
 With `useStateWithAi`, the component description, current state, and writable props all travel with every prompt. The AI always sees fresh context — no stale cache, no separate sync step.
 
 **Fail fast.**
-The server throws on startup if `registryPath` is given but the file doesn't exist. Patches that reference non-AI-writable props are rejected with 422. There is no silent fallback to an empty state.
+The server throws on startup if `registryPath` is given but the file doesn't exist. Patches that reference non-AI-writable props are rejected with 422. There is no silent fallback.
 
 ## Packages
 
@@ -44,7 +46,7 @@ The server throws on startup if `registryPath` is given but the file doesn't exi
 | `sdk` | LLM orchestration (Anthropic) | Passed into `server` |
 | `core` | Shared TypeScript types | All packages |
 
-`demo/server` and `demo/webapp` are not published — they're the development sandbox that uses all packages as a consumer would.
+`demo/server` and `demo/webapp` are not published — they're the development sandbox.
 
 ## Two component patterns
 

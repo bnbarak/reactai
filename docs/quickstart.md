@@ -116,7 +116,36 @@ interface MyCardProps {
 export const AiMyCard = reactAI(MyCard, { key: 'my-card', description: 'A card component' })
 ```
 
-## 6. Send a prompt
+## 6. Rendering lists of AI-controllable components
+
+The two patterns handle multiple instances differently.
+
+**Hook (`useStateWithAi`) — singleton per description.**
+All mounts sharing the same description are treated as one logical unit. If you render the same component twice with the same description, the AI sees a single entry and updates both simultaneously. Use this for components that represent a single piece of global or page-level state.
+
+**HOC (`reactAI()`) — independent per mount.**
+Each rendered instance gets its own stable ID. Render 10 cards in a list and the AI sees 10 independent entries — it can update any one specifically.
+
+```tsx
+// Each card is independently AI-controllable
+export const AiProductCard = reactAI(ProductCard, {
+  key: 'product-card',
+  description: 'A product card',
+})
+
+// In your list — no extra setup needed
+export const ProductList = ({ products }: { products: Product[] }) => (
+  <div>
+    {products.map(p => (
+      <AiProductCard key={p.id} title={p.title} price={p.price} />
+    ))}
+  </div>
+)
+```
+
+The AI can now respond to prompts like "mark the second card as out of stock" or "update the price on the laptop card" — it resolves which instance to patch from the snapshot context.
+
+## 7. Send a prompt
 
 From anywhere in your app, post to `/api/ai/prompt`:
 
