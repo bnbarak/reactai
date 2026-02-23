@@ -140,7 +140,7 @@ export const ChatPanel = () => {
       setMessages((prev) => [...prev, { role: 'assistant', content: replies.join('\n') }]);
       setLoading(false);
     },
-    [sessionId, serverUrl, loading],
+    [sessionId, serverUrl, loading, addTurn, clearTurns, setLoading],
   );
 
   function handleSubmit(e: React.FormEvent) {

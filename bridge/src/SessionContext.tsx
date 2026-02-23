@@ -45,6 +45,7 @@ export const SessionProvider = ({
       mounted = false;
       if (sessionId) sseClient.disconnect(sessionId);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally reruns only on serverUrl change; sessionId is only used in cleanup
   }, [serverUrl]);
 
   return (

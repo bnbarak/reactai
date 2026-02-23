@@ -30,6 +30,7 @@ vi.mock('@bnbarak/reactai/react', () => ({
         if (event.type === 'snapshot') setState(event.state as Record<string, unknown>);
       });
       return unsub;
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- test mock, subscribe once on mount
     }, []);
     return [state, setState, { current: null }];
   },

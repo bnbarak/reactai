@@ -23,6 +23,7 @@ export function reactAI<P extends object>(
         state: { ...baseProps, ...aiStatePatch } as Record<string, unknown>,
       });
       return () => snapshotRegistry.remove(instanceId);
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- instanceId/key are stable HOC closures; baseProps spreads every render
     }, [aiStatePatch]);
 
     const effectiveProps = { ...baseProps, ...aiStatePatch } as P;

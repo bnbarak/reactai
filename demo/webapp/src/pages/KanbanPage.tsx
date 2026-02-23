@@ -40,7 +40,8 @@ const KanbanCard = ({ description, initialState, onStateChange }: KanbanCardProp
 
   useEffect(() => {
     onStateChange(state as CardState);
-  }, [state.column, state.priority, state.assignee, state.title]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- tracking specific fields intentionally, not the whole state object
+  }, [state.column, state.priority, state.assignee, state.title, onStateChange]);
 
   return <div ref={aiRef as React.RefObject<HTMLDivElement>} />;
 };

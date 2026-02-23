@@ -26,11 +26,13 @@ export function useStateWithAi<T extends Record<string, unknown>>(
 
   useLayoutEffect(() => {
     aiRef.current?.setAttribute('data-ai-id', instanceId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- instanceId is derived from a ref, stable for component lifetime
   }, []);
 
   useEffect(() => {
     snapshotRegistry.set(instanceId, { key, state, description, aiWritableProps, context });
     return () => snapshotRegistry.remove(instanceId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- key/instanceId/aiWritableProps are stable refs; only re-snapshot when state changes
   }, [state]);
 
   useEffect(() => {
@@ -46,6 +48,7 @@ export function useStateWithAi<T extends Record<string, unknown>>(
         setState(event.state as T);
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- instanceId === key, already in deps
   }, [sessionId, key]);
 
   return [state, setState, aiRef];

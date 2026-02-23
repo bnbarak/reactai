@@ -44,6 +44,7 @@ const TicTacToeBoardInner = ({
     const xCount = boardProp.filter((c) => c === 'X').length;
     const oCount = boardProp.filter((c) => c === 'O').length;
     setIsX(xCount <= oCount);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- boardKey is a stable string derived from boardProp, avoids array reference instability
   }, [boardKey]);
 
   const winner = calculateWinner(board);
