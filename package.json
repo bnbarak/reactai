@@ -2,6 +2,7 @@
   "name": "oneapi",
   "version": "1.0.2",
   "private": true,
+  "type": "module",
   "workspaces": [
     "demo/webapp",
     "demo/server",
@@ -18,10 +19,21 @@
     "demo:server": "tsx demo/server/src/index.ts",
     "demo:webapp": "npm run dev --workspace=webapp",
     "dev": "npm run scan && concurrently \"npm run dev:server\" \"npm run dev --workspace=webapp\"",
-    "test": "npm run test --workspaces --if-present"
+    "test": "npm run test --workspaces --if-present",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
+    "@eslint/js": "^9.0.0",
     "concurrently": "^9.1.0",
-    "tsx": "^4.19.2"
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react": "^7.37.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-workspaces": "^0.10.0",
+    "prettier": "^3.0.0",
+    "tsx": "^4.19.2",
+    "typescript-eslint": "^8.0.0"
   }
 }
