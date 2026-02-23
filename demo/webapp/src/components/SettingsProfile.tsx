@@ -1,8 +1,13 @@
-import React from 'react'
-import { useStateWithAi } from '@bnbarak/reactai/react'
+import React from 'react';
+import { useStateWithAi } from '@bnbarak/reactai/react';
 
-const ROW = { display: 'flex', flexDirection: 'column' as const, gap: 4 }
-const LABEL = { fontSize: 11, letterSpacing: 1, textTransform: 'uppercase' as const, color: '#888' }
+const ROW = { display: 'flex', flexDirection: 'column' as const, gap: 4 };
+const LABEL = {
+  fontSize: 11,
+  letterSpacing: 1,
+  textTransform: 'uppercase' as const,
+  color: '#888',
+};
 const INPUT = {
   fontSize: 15,
   fontWeight: 'bold' as const,
@@ -13,20 +18,23 @@ const INPUT = {
   padding: '2px 0',
   background: 'transparent',
   width: '100%',
-}
+};
 
-const LANGUAGES = ['English', 'Hebrew', 'Spanish', 'French', 'German', 'Japanese']
-const TIMEZONES = ['UTC', 'US/Eastern', 'US/Pacific', 'Europe/London', 'Asia/Tokyo']
+const LANGUAGES = ['English', 'Hebrew', 'Spanish', 'French', 'German', 'Japanese'];
+const TIMEZONES = ['UTC', 'US/Eastern', 'US/Pacific', 'Europe/London', 'Asia/Tokyo'];
 
 export const SettingsProfile = () => {
   const [state, setState, aiRef] = useStateWithAi(
     'User profile settings',
     { username: 'barak', language: 'English', timezone: 'UTC' },
     { language: LANGUAGES, timezone: TIMEZONES },
-  )
+  );
 
   return (
-    <div ref={aiRef as React.RefObject<HTMLDivElement>} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <div
+      ref={aiRef as React.RefObject<HTMLDivElement>}
+      style={{ display: 'flex', flexDirection: 'column', gap: 24 }}
+    >
       <div style={ROW}>
         <span style={LABEL}>Username</span>
         <input
@@ -42,7 +50,11 @@ export const SettingsProfile = () => {
           value={state.language}
           onChange={(e) => setState({ ...state, language: e.target.value })}
         >
-          {LANGUAGES.map((l) => <option key={l} value={l}>{l}</option>)}
+          {LANGUAGES.map((l) => (
+            <option key={l} value={l}>
+              {l}
+            </option>
+          ))}
         </select>
       </div>
       <div style={ROW}>
@@ -52,7 +64,11 @@ export const SettingsProfile = () => {
           value={state.timezone}
           onChange={(e) => setState({ ...state, timezone: e.target.value })}
         >
-          {TIMEZONES.map((tz) => <option key={tz} value={tz}>{tz}</option>)}
+          {TIMEZONES.map((tz) => (
+            <option key={tz} value={tz}>
+              {tz}
+            </option>
+          ))}
         </select>
       </div>
       <div style={ROW}>
@@ -68,5 +84,5 @@ export const SettingsProfile = () => {
         <span style={{ ...INPUT, borderBottom: 'none' }}>Pro</span>
       </div>
     </div>
-  )
-}
+  );
+};

@@ -1,4 +1,4 @@
-import { reactAI } from '@bnbarak/reactai/react'
+import { reactAI } from '@bnbarak/reactai/react';
 
 /**
  * @reactAi
@@ -8,13 +8,13 @@ import { reactAI } from '@bnbarak/reactai/react'
  */
 interface DemoCardProps {
   /** @reactAi Headline text shown at top of card */
-  title: string
+  title: string;
   /** @reactAi Body paragraph text */
-  body?: string
+  body?: string;
   /** @reactAi Label for the CTA button */
-  buttonLabel?: string
+  buttonLabel?: string;
   /** @noAI Internal: never writable by AI */
-  onButtonClick: () => void
+  onButtonClick: () => void;
 }
 
 const DemoCardInner = ({ title, body, buttonLabel, onButtonClick }: DemoCardProps) => {
@@ -26,10 +26,10 @@ const DemoCardInner = ({ title, body, buttonLabel, onButtonClick }: DemoCardProp
         {buttonLabel ?? 'Learn More'}
       </button>
     </div>
-  )
-}
+  );
+};
 
 export const DemoCard = reactAI(DemoCardInner, {
   key: 'demo-card',
   description: 'A card component that displays a title, body text, and CTA button.',
-})
+});

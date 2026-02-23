@@ -1,14 +1,38 @@
-import React from 'react'
-import { PortfolioHeader } from '../components/PortfolioHeader.js'
-import { StockPosition } from '../components/StockPosition.js'
-import { PortfolioChart } from '../components/PortfolioChart.js'
+import React from 'react';
+import { PortfolioHeader } from '../components/PortfolioHeader.js';
+import { StockPosition } from '../components/StockPosition.js';
+import { PortfolioChart } from '../components/PortfolioChart.js';
 
 const STOCKS = [
-  { ticker: 'NVDA', companyName: 'NVIDIA Corp.', shares: 18, currentPrice: 887.40, changePercent: 4.2 },
-  { ticker: 'AAPL', companyName: 'Apple Inc.', shares: 50, currentPrice: 189.30, changePercent: 1.1 },
-  { ticker: 'MSFT', companyName: 'Microsoft Corp.', shares: 25, currentPrice: 412.80, changePercent: -0.5 },
-  { ticker: 'TSLA', companyName: 'Tesla Inc.', shares: 30, currentPrice: 248.50, changePercent: 2.3 },
-]
+  {
+    ticker: 'NVDA',
+    companyName: 'NVIDIA Corp.',
+    shares: 18,
+    currentPrice: 887.4,
+    changePercent: 4.2,
+  },
+  {
+    ticker: 'AAPL',
+    companyName: 'Apple Inc.',
+    shares: 50,
+    currentPrice: 189.3,
+    changePercent: 1.1,
+  },
+  {
+    ticker: 'MSFT',
+    companyName: 'Microsoft Corp.',
+    shares: 25,
+    currentPrice: 412.8,
+    changePercent: -0.5,
+  },
+  {
+    ticker: 'TSLA',
+    companyName: 'Tesla Inc.',
+    shares: 30,
+    currentPrice: 248.5,
+    changePercent: 2.3,
+  },
+];
 
 const CHART_DATA = [
   { date: 'Sep', value: 38900 },
@@ -16,9 +40,9 @@ const CHART_DATA = [
   { date: 'Nov', value: 45200 },
   { date: 'Dec', value: 43900 },
   { date: 'Jan', value: 46173 },
-]
+];
 
-const totalValue = STOCKS.reduce((sum, s) => sum + s.shares * s.currentPrice, 0)
+const totalValue = STOCKS.reduce((sum, s) => sum + s.shares * s.currentPrice, 0);
 
 export const PortfolioPage = () => {
   return (
@@ -37,5 +61,5 @@ export const PortfolioPage = () => {
 
       <PortfolioChart title="Portfolio Value — 5 months" data={CHART_DATA} />
     </div>
-  )
-}
+  );
+};

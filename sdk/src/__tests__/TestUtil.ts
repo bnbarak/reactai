@@ -1,5 +1,5 @@
-import { vi } from 'vitest'
-import type { ComponentManifest, MountedInstance } from '../../../core/src/types.js'
+import { vi } from 'vitest';
+import type { ComponentManifest, MountedInstance } from 'react-ai-core/src/types.js';
 
 export const TestUtil = {
   createManifest: (key = 'demo-card'): ComponentManifest => ({
@@ -32,4 +32,4 @@ export const TestUtil = {
       }),
     },
   }),
-}
+};

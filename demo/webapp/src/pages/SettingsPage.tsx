@@ -1,19 +1,19 @@
-import React from 'react'
-import { useStateWithAi } from '@bnbarak/reactai/react'
-import { SettingsProfile } from '../components/SettingsProfile.js'
+import React from 'react';
+import { useStateWithAi } from '@bnbarak/reactai/react';
+import { SettingsProfile } from '../components/SettingsProfile.js';
 
-type Tab = 'profile' | 'notifications' | 'appearance'
+type Tab = 'profile' | 'notifications' | 'appearance';
 
-const TABS: Tab[] = ['profile', 'notifications', 'appearance']
+const TABS: Tab[] = ['profile', 'notifications', 'appearance'];
 
 export const SettingsPage = () => {
   const [state, setState, aiRef] = useStateWithAi(
     'Settings tab navigation',
     { activeTab: 'profile' as Tab },
     { activeTab: TABS },
-  )
+  );
 
-  const tab = state.activeTab
+  const tab = state.activeTab;
 
   return (
     <div ref={aiRef as React.RefObject<HTMLDivElement>} style={{ padding: 40, maxWidth: 560 }}>
@@ -45,36 +45,58 @@ export const SettingsPage = () => {
       {tab === 'notifications' && <NotificationsTab />}
       {tab === 'appearance' && <AppearanceTab />}
     </div>
-  )
-}
+  );
+};
 
 const NotificationsTab = () => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, fontFamily: 'monospace', fontSize: 13 }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 16,
+        fontFamily: 'monospace',
+        fontSize: 13,
+      }}
+    >
       {[
         ['Email digests', true],
         ['Push notifications', false],
         ['Weekly summary', true],
         ['Security alerts', true],
       ].map(([label, on]) => (
-        <label key={label as string} style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
+        <label
+          key={label as string}
+          style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}
+        >
           <input type="checkbox" defaultChecked={on as boolean} style={{ width: 14, height: 14 }} />
           {label}
         </label>
       ))}
     </div>
-  )
-}
+  );
+};
 
 const AppearanceTab = () => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, fontFamily: 'monospace', fontSize: 13 }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 16,
+        fontFamily: 'monospace',
+        fontSize: 13,
+      }}
+    >
       {[
         ['Compact', 'Tighter spacing for more content'],
         ['Default', 'Balanced spacing and readability'],
         ['Comfortable', 'Extra spacing for focus'],
       ].map(([label, desc], i) => (
-        <label key={label} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, cursor: 'pointer' }}>
+        <label
+          key={label}
+          style={{ display: 'flex', alignItems: 'flex-start', gap: 12, cursor: 'pointer' }}
+        >
           <input type="radio" name="density" defaultChecked={i === 1} style={{ marginTop: 2 }} />
           <div>
             <div style={{ fontWeight: 'bold' }}>{label}</div>
@@ -83,5 +105,5 @@ const AppearanceTab = () => {
         </label>
       ))}
     </div>
-  )
-}
+  );
+};

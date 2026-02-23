@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { motion } from 'motion/react'
-import { useSession } from '@bnbarak/reactai/react'
-import { snapshotRegistry } from '@bnbarak/reactai/react'
-import { markerRegistry } from '@bnbarak/reactai/react'
-import { extractAccessibilityTree } from '@bnbarak/reactai/react'
-import { useLoading } from '../LoadingContext.js'
-import { useDebug } from '../DebugContext.js'
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion } from 'motion/react';
+import { useSession } from '@bnbarak/reactai/react';
+import { snapshotRegistry } from '@bnbarak/reactai/react';
+import { markerRegistry } from '@bnbarak/reactai/react';
+import { extractAccessibilityTree } from '@bnbarak/reactai/react';
+import { useLoading } from '../LoadingContext.js';
+import { useDebug } from '../DebugContext.js';
 
-const MAX_TURNS = 4
-const INTER_TURN_DELAY_MS = 300
+const MAX_TURNS = 4;
+const INTER_TURN_DELAY_MS = 300;
 
 interface Message {
-  role: 'user' | 'assistant'
-  content: string
+  role: 'user' | 'assistant';
+  content: string;
 }
 
 const PROMPT_GROUPS: Array<{ page: string; prompts: string[] }> = [
@@ -35,7 +35,7 @@ const PROMPT_GROUPS: Array<{ page: string; prompts: string[] }> = [
     page: 'Kanban',
     prompts: [
       'Go to Kanban tab and move the login bug to done',
-      'Go to Kanban tab and reassign all of alice\'s tasks to bob',
+      "Go to Kanban tab and reassign all of alice's tasks to bob",
       'Go to Kanban tab and mark all high priority cards as done',
     ],
   },
@@ -51,113 +51,132 @@ const PROMPT_GROUPS: Array<{ page: string; prompts: string[] }> = [
     page: 'Music',
     prompts: [
       'Go to Music tab and switch to chill mode',
-      'Go to Music tab, I\'m feeling sad — change the mood',
+      "Go to Music tab, I'm feeling sad — change the mood",
       'Go to Music tab and play track 3 at volume 90',
     ],
   },
-]
+];
 
 export const ChatPanel = () => {
-  const { sessionId, serverUrl } = useSession()
-  const [input, setInput] = useState('')
-  const [messages, setMessages] = useState<Message[]>([])
-  const { loading, setLoading } = useLoading()
-  const { addTurn, clearTurns } = useDebug()
-  const [isRecording, setIsRecording] = useState(false)
-  const [speechSupported, setSpeechSupported] = useState(false)
+  const { sessionId, serverUrl } = useSession();
+  const [input, setInput] = useState('');
+  const [messages, setMessages] = useState<Message[]>([]);
+  const { loading, setLoading } = useLoading();
+  const { addTurn, clearTurns } = useDebug();
+  const [isRecording, setIsRecording] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(false);
 
   useEffect(() => {
     setSpeechSupported(
       typeof window !== 'undefined' &&
-      ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window),
-    )
-  }, [])
+        ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window),
+    );
+  }, []);
 
-  const doSubmit = useCallback(async (prompt: string) => {
-    if (!sessionId || !prompt.trim() || loading) return
+  const doSubmit = useCallback(
+    async (prompt: string) => {
+      if (!sessionId || !prompt.trim() || loading) return;
 
-    setInput('')
-    setMessages((prev) => [...prev, { role: 'user', content: prompt }])
-    setLoading(true)
-    clearTurns()
+      setInput('');
+      setMessages((prev) => [...prev, { role: 'user', content: prompt }]);
+      setLoading(true);
+      clearTurns();
 
-    let turns = 0
-    let isDone = false
-    const replies: string[] = []
+      let turns = 0;
+      let isDone = false;
+      const replies: string[] = [];
 
-    try {
-      while (!isDone && turns < MAX_TURNS) {
-        turns++
-        const accessibilityTree = extractAccessibilityTree()
-        const snapshot = snapshotRegistry.getAll()
-        const markers = markerRegistry.getAll()
-        const currentUrl = window.location.href
+      try {
+        while (!isDone && turns < MAX_TURNS) {
+          turns++;
+          const accessibilityTree = extractAccessibilityTree();
+          const snapshot = snapshotRegistry.getAll();
+          const markers = markerRegistry.getAll();
+          const currentUrl = window.location.href;
 
-        const res = await fetch(`${serverUrl}/ai/prompt`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sessionId, prompt, snapshot, accessibilityTree, markers, currentUrl }),
-        })
-        const data = await res.json()
+          const res = await fetch(`${serverUrl}/ai/prompt`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              sessionId,
+              prompt,
+              snapshot,
+              accessibilityTree,
+              markers,
+              currentUrl,
+            }),
+          });
+          const data = await res.json();
 
-        if (data.applied) {
-          const intent = data.reasoning ? `${data.reasoning}\n` : ''
-          replies.push(`${intent}[${turns}] ✓ ${data.target?.key}: ${JSON.stringify(data.patch)}`)
-          addTurn({ turn: turns, intent: data.reasoning, key: data.target?.key, patch: data.patch, success: true })
-        } else {
-          const error = data.errors?.join(', ') ?? 'unknown error'
-          const intent = data.reasoning ? `${data.reasoning}\n` : ''
-          replies.push(`${intent}[${turns}] ✗ ${error}`)
-          addTurn({ turn: turns, intent: data.reasoning, success: false, error })
-          break
+          if (data.applied) {
+            const intent = data.reasoning ? `${data.reasoning}\n` : '';
+            replies.push(
+              `${intent}[${turns}] ✓ ${data.target?.key}: ${JSON.stringify(data.patch)}`,
+            );
+            addTurn({
+              turn: turns,
+              intent: data.reasoning,
+              key: data.target?.key,
+              patch: data.patch,
+              success: true,
+            });
+          } else {
+            const error = data.errors?.join(', ') ?? 'unknown error';
+            const intent = data.reasoning ? `${data.reasoning}\n` : '';
+            replies.push(`${intent}[${turns}] ✗ ${error}`);
+            addTurn({ turn: turns, intent: data.reasoning, success: false, error });
+            break;
+          }
+
+          isDone = data.isDone ?? true;
+          if (!isDone) await new Promise((r) => setTimeout(r, INTER_TURN_DELAY_MS));
         }
-
-        isDone = data.isDone ?? true
-        if (!isDone) await new Promise((r) => setTimeout(r, INTER_TURN_DELAY_MS))
+      } catch (err) {
+        const error = err instanceof Error ? err.message : 'network error';
+        replies.push(`[${turns}] ✗ ${error}`);
+        addTurn({ turn: turns, success: false, error });
       }
-    } catch (err) {
-      const error = err instanceof Error ? err.message : 'network error'
-      replies.push(`[${turns}] ✗ ${error}`)
-      addTurn({ turn: turns, success: false, error })
-    }
 
-    setMessages((prev) => [...prev, { role: 'assistant', content: replies.join('\n') }])
-    setLoading(false)
-  }, [sessionId, serverUrl, loading])
+      setMessages((prev) => [...prev, { role: 'assistant', content: replies.join('\n') }]);
+      setLoading(false);
+    },
+    [sessionId, serverUrl, loading, addTurn, clearTurns, setLoading],
+  );
 
   function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    doSubmit(input.trim())
+    e.preventDefault();
+    doSubmit(input.trim());
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      doSubmit(input.trim())
+      e.preventDefault();
+      doSubmit(input.trim());
     }
   }
 
   function handleMicClick() {
     const SpeechRecognitionCtor =
       (window as unknown as { SpeechRecognition?: typeof SpeechRecognition }).SpeechRecognition ??
-      (window as unknown as { webkitSpeechRecognition?: typeof SpeechRecognition }).webkitSpeechRecognition
-    if (!SpeechRecognitionCtor) return
+      (window as unknown as { webkitSpeechRecognition?: typeof SpeechRecognition })
+        .webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) return;
 
-    setIsRecording(true)
-    const recognition = new SpeechRecognitionCtor()
-    recognition.lang = 'en-US'
-    recognition.interimResults = false
-    recognition.maxAlternatives = 1
+    setIsRecording(true);
+    const recognition = new SpeechRecognitionCtor();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = event.results[0][0].transcript
-      setInput((prev) => (prev ? `${prev} ${transcript}` : transcript))
-      setIsRecording(false)
-    }
+      const transcript = event.results[0][0].transcript;
+      setInput((prev) => (prev ? `${prev} ${transcript}` : transcript));
+      setIsRecording(false);
+    };
 
-    recognition.onerror = () => setIsRecording(false)
-    recognition.onend = () => setIsRecording(false)
-    recognition.start()
+    recognition.onerror = () => setIsRecording(false);
+    recognition.onend = () => setIsRecording(false);
+    recognition.start();
   }
 
   return (
@@ -198,8 +217,17 @@ export const ChatPanel = () => {
       >
         {messages.length === 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <p style={{ color: sessionId ? '#999' : '#f0a500', fontSize: 11, margin: 0, lineHeight: 1.5 }}>
-              {sessionId ? 'Click a prompt or type your own command below.' : 'Connecting to server…'}
+            <p
+              style={{
+                color: sessionId ? '#999' : '#f0a500',
+                fontSize: 11,
+                margin: 0,
+                lineHeight: 1.5,
+              }}
+            >
+              {sessionId
+                ? 'Click a prompt or type your own command below.'
+                : 'Connecting to server…'}
             </p>
             {PROMPT_GROUPS.map((group) => (
               <div key={group.page}>
@@ -234,13 +262,13 @@ export const ChatPanel = () => {
                         transition: 'background 0.1s, border-color 0.1s',
                       }}
                       onMouseEnter={(e) => {
-                        if (loading) return
-                        e.currentTarget.style.background = '#f5f5f5'
-                        e.currentTarget.style.borderColor = '#999'
+                        if (loading) return;
+                        e.currentTarget.style.background = '#f5f5f5';
+                        e.currentTarget.style.borderColor = '#999';
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'white'
-                        e.currentTarget.style.borderColor = '#e0e0e0'
+                        e.currentTarget.style.background = 'white';
+                        e.currentTarget.style.borderColor = '#e0e0e0';
                       }}
                     >
                       {prompt}
@@ -277,7 +305,13 @@ export const ChatPanel = () => {
 
       <form
         onSubmit={handleSubmit}
-        style={{ padding: 12, borderTop: '1px solid black', display: 'flex', flexDirection: 'column', gap: 6 }}
+        style={{
+          padding: 12,
+          borderTop: '1px solid black',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 6,
+        }}
       >
         <textarea
           value={input}
@@ -346,5 +380,5 @@ export const ChatPanel = () => {
         </div>
       </form>
     </div>
-  )
-}
+  );
+};

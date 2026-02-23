@@ -1,22 +1,24 @@
-import 'dotenv/config'
-import express from 'express'
-import cors from 'cors'
-import { createReactAiRouter } from '@bnbarak/reactai/server'
-import { ReactAiSdk } from '@bnbarak/reactai/sdk'
-import Anthropic from '@anthropic-ai/sdk'
-import { readFileSync } from 'fs'
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import { createReactAiRouter } from '@bnbarak/reactai/server';
+import { ReactAiSdk } from '@bnbarak/reactai/sdk';
+import Anthropic from '@anthropic-ai/sdk';
 
-const apiKey = process.env.ANTHROPIC_API_KEY
-if (!apiKey) throw new Error('ANTHROPIC_API_KEY environment variable is required')
+const apiKey = process.env.ANTHROPIC_API_KEY;
+if (!apiKey) throw new Error('ANTHROPIC_API_KEY environment variable is required');
 
-const sdk = new ReactAiSdk(new Anthropic({ apiKey }))
+const sdk = new ReactAiSdk(new Anthropic({ apiKey }));
 
-const app = express()
-app.use(cors())
-app.use('/api', createReactAiRouter({
-  registryPath: './core/src/generated/registry.json',
-  sdk,
-}))
+const app = express();
+app.use(cors());
+app.use(
+  '/api',
+  createReactAiRouter({
+    registryPath: './core/src/generated/registry.json',
+    sdk,
+  }),
+);
 
-const PORT = process.env.PORT ?? 3001
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`))
+const PORT = process.env.PORT ?? 3001;
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

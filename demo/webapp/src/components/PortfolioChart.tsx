@@ -1,9 +1,9 @@
-import React from 'react'
-import { reactAI } from '@bnbarak/reactai/react'
+import React from 'react';
+import { reactAI } from '@bnbarak/reactai/react';
 
 interface DataPoint {
-  date: string
-  value: number
+  date: string;
+  value: number;
 }
 
 /**
@@ -14,44 +14,40 @@ interface DataPoint {
  */
 interface PortfolioChartProps {
   /** @reactAi Chart title shown above the SVG */
-  title: string
+  title: string;
   /** @noAI Array of { date, value } data points to plot */
-  data: DataPoint[]
+  data: DataPoint[];
 }
 
 const PortfolioChartInner = ({ title, data }: PortfolioChartProps) => {
-  const W = 640
-  const H = 200
-  const PAD = { top: 16, right: 24, bottom: 36, left: 64 }
-  const innerW = W - PAD.left - PAD.right
-  const innerH = H - PAD.top - PAD.bottom
+  const W = 640;
+  const H = 200;
+  const PAD = { top: 16, right: 24, bottom: 36, left: 64 };
+  const innerW = W - PAD.left - PAD.right;
+  const innerH = H - PAD.top - PAD.bottom;
 
-  const values = data.map((d) => d.value)
-  const minV = Math.min(...values) * 0.97
-  const maxV = Math.max(...values) * 1.02
-  const range = maxV - minV
+  const values = data.map((d) => d.value);
+  const minV = Math.min(...values) * 0.97;
+  const maxV = Math.max(...values) * 1.02;
+  const range = maxV - minV;
 
-  const toX = (i: number) => PAD.left + (i / (data.length - 1)) * innerW
-  const toY = (v: number) => PAD.top + innerH - ((v - minV) / range) * innerH
+  const toX = (i: number) => PAD.left + (i / (data.length - 1)) * innerW;
+  const toY = (v: number) => PAD.top + innerH - ((v - minV) / range) * innerH;
 
-  const linePath = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${toX(i)},${toY(d.value)}`).join(' ')
-  const areaPath = `${linePath} L${toX(data.length - 1)},${PAD.top + innerH} L${toX(0)},${PAD.top + innerH} Z`
+  const linePath = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${toX(i)},${toY(d.value)}`).join(' ');
+  const areaPath = `${linePath} L${toX(data.length - 1)},${PAD.top + innerH} L${toX(0)},${PAD.top + innerH} Z`;
 
   const yTicks = [0, 0.25, 0.5, 0.75, 1].map((p) => ({
     v: minV + p * range,
     y: PAD.top + innerH - p * innerH,
-  }))
+  }));
 
   return (
     <div>
       <p style={{ fontWeight: 'bold', fontSize: 13, margin: '0 0 12px', letterSpacing: 0.5 }}>
         {title}
       </p>
-      <svg
-        width="100%"
-        viewBox={`0 0 ${W} ${H}`}
-        style={{ display: 'block', overflow: 'visible' }}
-      >
+      <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block', overflow: 'visible' }}>
         {/* Grid lines */}
         {yTicks.map(({ y }, i) => (
           <line
@@ -127,10 +123,10 @@ const PortfolioChartInner = ({ title, data }: PortfolioChartProps) => {
         ))}
       </svg>
     </div>
-  )
-}
+  );
+};
 
 export const PortfolioChart = reactAI(PortfolioChartInner, {
   key: 'portfolio-chart',
   description: 'A line chart showing portfolio value over 12 months.',
-})
+});

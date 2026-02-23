@@ -1,13 +1,13 @@
-import type Anthropic from '@anthropic-ai/sdk'
-import type { ComponentManifest, MountedInstance } from '../../core/src/types.js'
-import { logPrompt } from './PromptLogger.js'
+import type Anthropic from '@anthropic-ai/sdk';
+import type { ComponentManifest, MountedInstance } from 'react-ai-core/src/types.js';
+import { logPrompt } from './PromptLogger.js';
 
 export interface CombinedResult {
-  key: string
-  instanceId: string
-  patch: Record<string, unknown>
-  done: boolean
-  intent?: string
+  key: string;
+  instanceId: string;
+  patch: Record<string, unknown>;
+  done: boolean;
+  intent?: string;
 }
 
 export class CombinedSelector {
@@ -26,33 +26,33 @@ export class CombinedSelector {
         (m) =>
           `- key: "${m.key}"\n  description: "${m.description}"\n  ai-writable props: ${m.aiWritableProps.join(', ')}`,
       )
-      .join('\n')
+      .join('\n');
 
     const instanceList = mountedSnapshot
       .map((i) => {
-        let line = `- key: "${i.key}", instanceId: "${i.instanceId}"`
+        let line = `- key: "${i.key}", instanceId: "${i.instanceId}"`;
         if (i.currentProps && Object.keys(i.currentProps).length > 0) {
-          line += `\n  current state: ${JSON.stringify(i.currentProps)}`
+          line += `\n  current state: ${JSON.stringify(i.currentProps)}`;
         }
         if (i.context && Object.keys(i.context).length > 0) {
-          line += `\n  options/constraints: ${JSON.stringify(i.context)}`
+          line += `\n  options/constraints: ${JSON.stringify(i.context)}`;
         }
-        return line
+        return line;
       })
-      .join('\n')
+      .join('\n');
 
     const treeSection = accessibilityTree
       ? `\n## Page structure (DOM accessibility tree)\n\`\`\`\n${accessibilityTree}\n\`\`\`\n`
-      : ''
+      : '';
 
-    const urlLine = `Current URL: ${currentUrl ?? '(unknown)'}`
+    const urlLine = `Current URL: ${currentUrl ?? '(unknown)'}`;
 
     const markerLines =
       markers && Object.keys(markers).length > 0
         ? `Active markers:\n${Object.entries(markers)
             .map(([k, v]) => `- ${k}: ${JSON.stringify(v)}`)
             .join('\n')}\n`
-        : ''
+        : '';
 
     const userMessage = `User prompt: "${prompt}"
 
@@ -64,9 +64,9 @@ ${componentList}
 Mounted instances (you MUST pick an instanceId from this exact list):
 ${instanceList || '(none registered yet)'}
 ${treeSection}
-Select the most appropriate component instance to modify and generate a patch with only its AI-writable props.`
+Select the most appropriate component instance to modify and generate a patch with only its AI-writable props.`;
 
-    logPrompt('CombinedSelector — select_and_patch', userMessage)
+    logPrompt('CombinedSelector — select_and_patch', userMessage);
 
     const response = await this.client.messages.create({
       model: 'claude-haiku-4-5-20251001',
@@ -74,7 +74,8 @@ Select the most appropriate component instance to modify and generate a patch wi
       tools: [
         {
           name: 'select_and_patch',
-          description: 'Select the component instance to modify and generate the props patch in one step',
+          description:
+            'Select the component instance to modify and generate the props patch in one step',
           input_schema: {
             type: 'object' as const,
             properties: {
@@ -89,7 +90,8 @@ Select the most appropriate component instance to modify and generate a patch wi
               },
               patch: {
                 type: 'object',
-                description: 'Props to update — only include AI-writable props for the selected component',
+                description:
+                  'Props to update — only include AI-writable props for the selected component',
               },
               done: {
                 type: 'boolean',
@@ -108,13 +110,13 @@ Select the most appropriate component instance to modify and generate a patch wi
       ],
       tool_choice: { type: 'tool', name: 'select_and_patch' },
       messages: [{ role: 'user', content: userMessage }],
-    })
+    });
 
-    const toolUse = response.content.find((b) => b.type === 'tool_use')
+    const toolUse = response.content.find((b) => b.type === 'tool_use');
     if (!toolUse || toolUse.type !== 'tool_use') {
-      throw new Error('LLM did not return a tool_use block for combined selection')
+      throw new Error('LLM did not return a tool_use block for combined selection');
     }
 
-    return toolUse.input as CombinedResult
+    return toolUse.input as CombinedResult;
   }
 }

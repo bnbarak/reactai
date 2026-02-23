@@ -1,5 +1,5 @@
-import React from 'react'
-import { TicTacToeBoard } from '../components/TicTacToeBoard.js'
+import React from 'react';
+import { TicTacToeBoard } from '../components/TicTacToeBoard.js';
 
 export const TicTacToePage = () => {
   return (
@@ -9,5 +9,5 @@ export const TicTacToePage = () => {
       </h2>
       <TicTacToeBoard board={['', '', '', '', '', '', '', '', '']} />
     </div>
-  )
-}
+  );
+};

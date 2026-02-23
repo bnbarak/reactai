@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react'
-import { markerRegistry } from '@bnbarak/reactai/react'
-import { useDebug } from '../DebugContext.js'
+import { useEffect, useState } from 'react';
+import { markerRegistry } from '@bnbarak/reactai/react';
+import { useDebug } from '../DebugContext.js';
 
 export const DebugPanel = () => {
-  const { turns } = useDebug()
-  const [markers, setMarkers] = useState<Record<string, unknown>>({})
+  const { turns } = useDebug();
+  const [markers, setMarkers] = useState<Record<string, unknown>>({});
 
   useEffect(() => {
-    const id = setInterval(() => setMarkers(markerRegistry.getAll()), 300)
-    return () => clearInterval(id)
-  }, [])
+    const id = setInterval(() => setMarkers(markerRegistry.getAll()), 300);
+    return () => clearInterval(id);
+  }, []);
 
-  const markerEntries = Object.entries(markers)
+  const markerEntries = Object.entries(markers);
 
   return (
     <div
@@ -85,30 +85,39 @@ export const DebugPanel = () => {
         )}
       </Section>
     </div>
-  )
-}
+  );
+};
 
 const Section = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div style={{ padding: '12px 16px', borderBottom: '1px solid #e0e0e0' }}>
-    <div style={{ fontWeight: 'bold', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#888', marginBottom: 8 }}>
+    <div
+      style={{
+        fontWeight: 'bold',
+        fontSize: 10,
+        letterSpacing: 1,
+        textTransform: 'uppercase',
+        color: '#888',
+        marginBottom: 8,
+      }}
+    >
       {label}
     </div>
     {children}
   </div>
-)
+);
 
 const Row = ({ children }: { children: React.ReactNode }) => (
   <div style={{ display: 'flex', gap: 6, marginBottom: 3 }}>{children}</div>
-)
+);
 
 const Key = ({ children }: { children: React.ReactNode }) => (
   <span style={{ color: '#888', flexShrink: 0 }}>{String(children)}:</span>
-)
+);
 
 const Val = ({ children }: { children: React.ReactNode }) => (
   <span style={{ color: '#222', wordBreak: 'break-all' }}>{String(children)}</span>
-)
+);
 
 const Empty = ({ children }: { children: React.ReactNode }) => (
   <span style={{ color: '#bbb', fontStyle: 'italic' }}>{children}</span>
-)
+);

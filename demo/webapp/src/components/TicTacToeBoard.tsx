@@ -1,16 +1,21 @@
-import React, { useState, useEffect } from 'react'
-import { reactAI } from '@bnbarak/reactai/react'
+import React, { useState, useEffect } from 'react';
+import { reactAI } from '@bnbarak/reactai/react';
 
 function calculateWinner(board: string[]): string | null {
   const lines = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8],
-    [0, 3, 6], [1, 4, 7], [2, 5, 8],
-    [0, 4, 8], [2, 4, 6],
-  ]
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
   for (const [a, b, c] of lines) {
-    if (board[a] && board[a] === board[b] && board[a] === board[c]) return board[a]
+    if (board[a] && board[a] === board[b] && board[a] === board[c]) return board[a];
   }
-  return null
+  return null;
 }
 
 /**
@@ -21,46 +26,50 @@ function calculateWinner(board: string[]): string | null {
  */
 interface TicTacToeBoardProps {
   /** @reactAi The 9-cell board state: array of 'X', 'O', or '' (empty). Index 0=top-left, 2=top-right, 4=center, 8=bot-right. */
-  board: string[]
+  board: string[];
   /** @reactAi Optional status message override shown above the board */
-  statusMessage?: string
+  statusMessage?: string;
 }
 
-const TicTacToeBoardInner = ({ board: boardProp, statusMessage: statusOverride }: TicTacToeBoardProps) => {
-  const [board, setBoard] = useState<string[]>(boardProp)
-  const [isX, setIsX] = useState(true)
+const TicTacToeBoardInner = ({
+  board: boardProp,
+  statusMessage: statusOverride,
+}: TicTacToeBoardProps) => {
+  const [board, setBoard] = useState<string[]>(boardProp);
+  const [isX, setIsX] = useState(true);
 
-  const boardKey = boardProp.join(',')
+  const boardKey = boardProp.join(',');
   useEffect(() => {
-    setBoard([...boardProp])
-    const xCount = boardProp.filter((c) => c === 'X').length
-    const oCount = boardProp.filter((c) => c === 'O').length
-    setIsX(xCount <= oCount)
-  }, [boardKey])
+    setBoard([...boardProp]);
+    const xCount = boardProp.filter((c) => c === 'X').length;
+    const oCount = boardProp.filter((c) => c === 'O').length;
+    setIsX(xCount <= oCount);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- boardKey is a stable string derived from boardProp, avoids array reference instability
+  }, [boardKey]);
 
-  const winner = calculateWinner(board)
-  const isDraw = !winner && board.every((c) => c !== '')
-  const gameOver = !!winner || isDraw
+  const winner = calculateWinner(board);
+  const isDraw = !winner && board.every((c) => c !== '');
+  const gameOver = !!winner || isDraw;
 
   const derivedStatus = winner
     ? `${winner} wins!`
     : isDraw
       ? "It's a draw!"
-      : `${isX ? 'X' : 'O'}'s turn`
+      : `${isX ? 'X' : 'O'}'s turn`;
 
-  const displayStatus = statusOverride || derivedStatus
+  const displayStatus = statusOverride || derivedStatus;
 
   function handleCellClick(i: number) {
-    if (board[i] || gameOver) return
-    const next = [...board]
-    next[i] = isX ? 'X' : 'O'
-    setBoard(next)
-    setIsX(!isX)
+    if (board[i] || gameOver) return;
+    const next = [...board];
+    next[i] = isX ? 'X' : 'O';
+    setBoard(next);
+    setIsX(!isX);
   }
 
   function handleReset() {
-    setBoard(Array(9).fill(''))
-    setIsX(true)
+    setBoard(Array(9).fill(''));
+    setIsX(true);
   }
 
   return (
@@ -79,8 +88,8 @@ const TicTacToeBoardInner = ({ board: boardProp, statusMessage: statusOverride }
         }}
       >
         {board.map((cell, i) => {
-          const col = i % 3
-          const row = Math.floor(i / 3)
+          const col = i % 3;
+          const row = Math.floor(i / 3);
           return (
             <button
               key={i}
@@ -103,7 +112,7 @@ const TicTacToeBoardInner = ({ board: boardProp, statusMessage: statusOverride }
             >
               {cell}
             </button>
-          )
+          );
         })}
       </div>
 
@@ -123,10 +132,11 @@ const TicTacToeBoardInner = ({ board: boardProp, statusMessage: statusOverride }
         Reset
       </button>
     </div>
-  )
-}
+  );
+};
 
 export const TicTacToeBoard = reactAI(TicTacToeBoardInner, {
   key: 'tictactoe-board',
-  description: 'Self-contained Tic-Tac-Toe board. AI can patch board (9-element array) to make moves, and statusMessage for custom text.',
-})
+  description:
+    'Self-contained Tic-Tac-Toe board. AI can patch board (9-element array) to make moves, and statusMessage for custom text.',
+});

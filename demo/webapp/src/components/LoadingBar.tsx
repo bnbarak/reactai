@@ -1,9 +1,9 @@
-import React from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import { useLoading } from '../LoadingContext.js'
+import React from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { useLoading } from '../LoadingContext.js';
 
 export const LoadingBar = () => {
-  const { loading } = useLoading()
+  const { loading } = useLoading();
 
   return (
     <AnimatePresence>
@@ -36,5 +36,5 @@ export const LoadingBar = () => {
         </motion.div>
       )}
     </AnimatePresence>
-  )
-}
+  );
+};
