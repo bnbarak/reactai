@@ -1,6 +1,10 @@
 # Quickstart
 
-Get reactAI running in your app in 5 minutes.
+reactAI connects your React components directly to AI agents. Instead of an agent clicking through your UI like a user, it reads your component state and patches it directly — the same way React does.
+
+You describe what a component represents. The agent figures out which component to update, what values to set, and applies it. Your component re-renders. No DOM interaction, no fragile selectors, no simulated clicks.
+
+Get up and running in 5 minutes.
 
 ## Prerequisites
 
@@ -145,7 +149,23 @@ export const ProductList = ({ products }: { products: Product[] }) => (
 
 The AI can now respond to prompts like "mark the second card as out of stock" or "update the price on the laptop card" — it resolves which instance to patch from the snapshot context.
 
-## 7. Send a prompt
+## 7. Tell the agent where it is
+
+Use `useAiMarker` to give the agent ambient context — what page is active, what mode the app is in, anything that helps it reason about the current state.
+
+```tsx
+import { useAiMarker } from '@bnbarak/reactai/react'
+
+export const AppLayout = ({ page }: { page: string }) => {
+  useAiMarker('activePage', page)
+
+  return <div>...</div>
+}
+```
+
+This is how prompts like `"Go to the Kanban tab and move Alice's tasks to Bob"` work — the agent sees `activePage: 'kanban'` in its context and knows which components are relevant.
+
+## 8. Send a prompt
 
 From anywhere in your app, post to `/api/ai/prompt`:
 
@@ -161,6 +181,5 @@ The component re-renders with the AI-applied patch automatically.
 
 ## What's next?
 
-- [Bridge guide](guides/bridge.md) — all hooks and HOC options
-- [Server guide](guides/server.md) — router options and API reference
-- [Scanner guide](guides/scanner.md) — annotation syntax and CLI
+- [Use Cases](use-cases.md) — what AI-first component control unlocks
+- [Architecture](guides/architecture.md) — full API reference for bridge, server, scanner, and SDK

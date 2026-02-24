@@ -42,9 +42,4 @@ nav:
   - Home: index.md
   - Quickstart: quickstart.md
   - Use Cases: use-cases.md
-  - Guides:
-    - Architecture: guides/architecture.md
-    - Bridge (React): guides/bridge.md
-    - Server: guides/server.md
-    - Scanner: guides/scanner.md
-    - SDK: guides/sdk.md
+  - Architecture: guides/architecture.md
