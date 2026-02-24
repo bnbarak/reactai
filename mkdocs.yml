@@ -41,6 +41,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Quickstart: quickstart.md
+  - Use Cases: use-cases.md
   - Guides:
     - Architecture: guides/architecture.md
     - Bridge (React): guides/bridge.md
