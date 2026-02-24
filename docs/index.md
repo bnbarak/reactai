@@ -4,9 +4,7 @@ Your React components should respond to AI the same way they respond to users �
 
 ## The idea
 
-Today, if an AI agent needs to update your UI, you write custom code: call an endpoint, parse the response, map it to state, update each component manually. Every component is a new integration.
-
-reactAI makes AI a first-class citizen for component state. You describe what a component represents and what it can accept. The AI figures out the rest — which component, which fields, what values. A user says "change the language to Spanish" and it just works.
+Your React app's components define its business layer — what data matters, what states are valid, how the product behaves. reactAI embeds AI agents directly into that layer. Instead of an agent running outside your app, guessing at the UI by clicking buttons and reading the screen, it becomes a native participant — driving your components through the interface their author designed.
 
 ```tsx
 // Without reactAI: custom wiring per component
