@@ -43,4 +43,5 @@ nav:
   - Quickstart: quickstart.md
   - Use Cases: use-cases.md
   - API Reference: api.md
+  - Scanner: scanner.md
   - Architecture: guides/architecture.md

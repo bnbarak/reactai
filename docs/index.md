@@ -70,6 +70,8 @@ export const AiCard = reactAI(DemoCard, { key: 'demo-card', description: 'A prod
 
 The AI can update `title`. It can never touch `onButtonClick` — function props are explicitly excluded.
 
+The scanner reads your TypeScript source at build time and extracts the annotation into a `registry.json` file — the server loads it at startup so the AI knows which components exist and what it is allowed to change. See the [Scanner →](scanner.md) for the full annotation syntax and CLI.
+
 ## Get started
 
 [Quickstart →](quickstart.md) — up and running in 5 minutes.
