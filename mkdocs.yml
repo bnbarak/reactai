@@ -42,4 +42,5 @@ nav:
   - Home: index.md
   - Quickstart: quickstart.md
   - Use Cases: use-cases.md
+  - API Reference: api.md
   - Architecture: guides/architecture.md
