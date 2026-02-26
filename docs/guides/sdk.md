@@ -4,20 +4,48 @@ The SDK is the LLM layer. It takes a prompt and a component snapshot, and return
 
 ## Design
 
-A single Anthropic API call does everything: selects the target component *and* generates the patch. This is a deliberate choice — a two-step "select then generate" flow would double the latency and split the context, making it harder for the model to reason about prop values while selecting.
+A single LLM call does everything: selects the target component *and* generates the patch. This is a deliberate choice — a two-step "select then generate" flow would double the latency and split the context, making it harder for the model to reason about prop values while selecting.
 
-The model used is `claude-haiku-4-5-20251001` — optimised for fast, structured output tasks.
+The SDK is built on the [Vercel AI SDK](https://sdk.vercel.ai) (`ai` package), which provides a unified interface across providers. Pass any `LanguageModel` — Anthropic, OpenAI, or any other supported provider.
 
 ## Usage
 
+### Anthropic (default)
+
 ```ts
 import { ReactAiSdk } from '@bnbarak/reactai/sdk'
-import Anthropic from '@anthropic-ai/sdk'
+import { anthropic } from '@ai-sdk/anthropic'
 
-const sdk = new ReactAiSdk(new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }))
+const sdk = new ReactAiSdk(anthropic('claude-haiku-4-5-20251001'))
 
-// Pass to createReactAiRouter
 app.use('/api', createReactAiRouter({ registryPath: './registry.json', sdk }))
+```
+
+Requires `ANTHROPIC_API_KEY` in the environment. The `@ai-sdk/anthropic` provider reads it automatically.
+
+### OpenAI
+
+```ts
+import { ReactAiSdk } from '@bnbarak/reactai/sdk'
+import { openai } from '@ai-sdk/openai'
+
+const sdk = new ReactAiSdk(openai('gpt-4o-mini'))
+
+app.use('/api', createReactAiRouter({ registryPath: './registry.json', sdk }))
+```
+
+Requires `OPENAI_API_KEY` in the environment.
+
+### Switching via environment variable
+
+The demo server reads `AI_PROVIDER` at startup:
+
+```bash
+# Anthropic (default)
+ANTHROPIC_API_KEY=sk-ant-... npm run demo:server
+
+# OpenAI
+AI_PROVIDER=openai OPENAI_API_KEY=sk-... npm run demo:server
 ```
 
 ## What happens inside
@@ -25,7 +53,7 @@ app.use('/api', createReactAiRouter({ registryPath: './registry.json', sdk }))
 ```
 updateFromPrompt(prompt, manifests, mountedSnapshot)
   → CombinedSelector.select(prompt, manifests, snapshot)
-      → one LLM call with tool_use
+      → generateText() with forced tool call
       → returns { key, instanceId, patch }
   → RetryValidator.validateWithRetry(key, patch, manifest)
       → validates patch keys against aiWritableProps
@@ -39,7 +67,7 @@ The SDK returns `isDone: true` when the task is complete after the current turn,
 
 ## Bring your own model
 
-The server depends on `AiSdkLike` — not the Anthropic SDK directly. You can implement your own:
+The server depends on `AiSdkLike` — not the SDK directly. You can implement your own:
 
 ```ts
 import type { AiSdkLike } from '@bnbarak/reactai/server'

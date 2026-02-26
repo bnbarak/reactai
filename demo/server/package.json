@@ -7,11 +7,15 @@
     "test": "echo \"no tests in demo-server\""
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.47",
+    "@ai-sdk/openai": "^3.0.34",
     "@bnbarak/reactai": "^1.0.8",
-    "@anthropic-ai/sdk": "^0.39.0",
+    "ai": "^6.0.101",
     "cors": "^2.8.5",
     "dotenv": "^17.3.1",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.2.1",
+    "tsx": "*"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

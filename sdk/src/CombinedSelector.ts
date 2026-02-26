@@ -1,4 +1,6 @@
-import type Anthropic from '@anthropic-ai/sdk';
+import { generateText, tool } from 'ai';
+import type { LanguageModel } from 'ai';
+import { z } from 'zod';
 import type { ComponentManifest, MountedInstance } from 'react-ai-core';
 import { logPrompt } from './PromptLogger.js';
 
@@ -11,7 +13,7 @@ export interface CombinedResult {
 }
 
 export class CombinedSelector {
-  constructor(private client: Anthropic) {}
+  constructor(private model: LanguageModel) {}
 
   async select(
     prompt: string,
@@ -68,55 +70,49 @@ Select the most appropriate component instance to modify and generate a patch wi
 
     logPrompt('CombinedSelector — select_and_patch', userMessage);
 
-    const response = await this.client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1024,
-      tools: [
-        {
-          name: 'select_and_patch',
+    const availableKeys = manifests.map((m) => m.key).join(', ');
+
+    const { toolCalls } = await generateText({
+      model: this.model,
+      maxTokens: 1024,
+      tools: {
+        select_and_patch: tool({
           description:
             'Select the component instance to modify and generate the props patch in one step',
-          input_schema: {
-            type: 'object' as const,
-            properties: {
-              key: {
-                type: 'string',
-                enum: manifests.map((m) => m.key),
-                description: 'Component key to modify',
-              },
-              instanceId: {
-                type: 'string',
-                description: 'Instance ID to target — must be from the mounted instances list',
-              },
-              patch: {
-                type: 'object',
-                description:
-                  'Props to update — only include AI-writable props for the selected component',
-              },
-              done: {
-                type: 'boolean',
-                description:
-                  'Set true when this action fully satisfies the user request. Set false if more steps are needed (e.g. navigated to a page but still need to update a component there).',
-              },
-              intent: {
-                type: 'string',
-                description:
-                  'One or two sentences in plain English describing what you are about to do and why. Shown to the user for transparency.',
-              },
-            },
-            required: ['key', 'instanceId', 'patch', 'done', 'intent'],
-          },
-        },
-      ],
-      tool_choice: { type: 'tool', name: 'select_and_patch' },
+          parameters: z.object({
+            key: z
+              .string()
+              .describe(`Component key to modify — must be one of: ${availableKeys}`),
+            instanceId: z
+              .string()
+              .describe('Instance ID to target — must be from the mounted instances list'),
+            patch: z
+              .record(z.unknown())
+              .describe(
+                'Props to update — only include AI-writable props for the selected component',
+              ),
+            done: z
+              .boolean()
+              .describe(
+                'Set true when this action fully satisfies the user request. Set false if more steps are needed (e.g. navigated to a page but still need to update a component there).',
+              ),
+            intent: z
+              .string()
+              .describe(
+                'One or two sentences in plain English describing what you are about to do and why. Shown to the user for transparency.',
+              ),
+          }),
+        }),
+      },
+      toolChoice: { type: 'tool', toolName: 'select_and_patch' },
       messages: [{ role: 'user', content: userMessage }],
     });
 
-    const toolUse = response.content.find((b) => b.type === 'tool_use');
-    if (!toolUse || toolUse.type !== 'tool_use') {
+    const toolCall = toolCalls[0];
+    if (!toolCall) {
       throw new Error('LLM did not return a tool_use block for combined selection');
     }
 
-    return toolUse.input as CombinedResult;
+    return toolCall.args as CombinedResult;
   }
 }

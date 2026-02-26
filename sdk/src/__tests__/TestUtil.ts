@@ -1,4 +1,3 @@
-import { vi } from 'vitest';
 import type { ComponentManifest, MountedInstance } from 'react-ai-core';
 
 export const TestUtil = {
@@ -23,13 +22,5 @@ export const TestUtil = {
     instanceId,
     currentProps,
     context,
-  }),
-
-  createMockClientNoToolUse: () => ({
-    messages: {
-      create: vi.fn().mockResolvedValue({
-        content: [{ type: 'text', text: 'No response' }],
-      }),
-    },
   }),
 };

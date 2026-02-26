@@ -1,4 +1,4 @@
-import type Anthropic from '@anthropic-ai/sdk';
+import type { LanguageModel } from 'ai';
 import type { ComponentManifest, MountedInstance, SdkResult } from 'react-ai-core';
 import { CombinedSelector } from './CombinedSelector.js';
 import { PatchGenerator } from './PatchGenerator.js';
@@ -9,9 +9,9 @@ export class ReactAiSdk {
   private generator: PatchGenerator;
   private retryValidator: RetryValidator;
 
-  constructor(client: Anthropic) {
-    this.combinedSelector = new CombinedSelector(client);
-    this.generator = new PatchGenerator(client);
+  constructor(model: LanguageModel) {
+    this.combinedSelector = new CombinedSelector(model);
+    this.generator = new PatchGenerator(model);
     this.retryValidator = new RetryValidator(this.generator);
   }
 

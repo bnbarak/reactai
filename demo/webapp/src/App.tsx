@@ -8,7 +8,7 @@ import { DebugPanel } from './components/DebugPanel.js';
 
 const App = () => {
   return (
-    <SessionProvider serverUrl="http://localhost:3001/api">
+    <SessionProvider serverUrl={import.meta.env.VITE_API_URL ?? '/api'}>
       <LoadingProvider>
         <DebugProvider>
           <div
