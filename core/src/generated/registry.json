@@ -10,12 +10,7 @@
       "type": "object",
       "properties": {
         "activePage": {
-          "type": "string",
-          "enum": [
-            "portfolio",
-            "tictactoe",
-            "settings"
-          ]
+          "type": "string"
         }
       },
       "additionalProperties": false,

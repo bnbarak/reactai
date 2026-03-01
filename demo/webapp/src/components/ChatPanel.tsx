@@ -55,6 +55,15 @@ const PROMPT_GROUPS: Array<{ page: string; prompts: string[] }> = [
       'Go to Music tab and play track 3 at volume 90',
     ],
   },
+  {
+    page: 'Search',
+    prompts: [
+      'Go to Search tab and show only DeWalt Power Tools under $200',
+      'Go to Search tab and filter for in-stock items on sale with 4+ stars',
+      'Go to Search tab and sort flooring by price low to high',
+      'Go to Search tab and find Milwaukee hand tools under $50',
+    ],
+  },
 ];
 
 export const ChatPanel = () => {
@@ -132,6 +141,7 @@ export const ChatPanel = () => {
           if (!isDone) await new Promise((r) => setTimeout(r, INTER_TURN_DELAY_MS));
         }
       } catch (err) {
+        console.error('[ChatPanel] doSubmit error:', err);
         const error = err instanceof Error ? err.message : 'network error';
         replies.push(`[${turns}] ✗ ${error}`);
         addTurn({ turn: turns, success: false, error });

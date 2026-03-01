@@ -6,6 +6,7 @@ import { createReactAiRouter } from '@bnbarak/reactai/server';
 import { ReactAiSdk } from '@bnbarak/reactai/sdk';
 import { anthropic } from '@ai-sdk/anthropic';
 import { openai } from '@ai-sdk/openai';
+import { PRODUCTS } from './productsData.js';
 
 const provider = (process.env.AI_PROVIDER ?? 'anthropic').toLowerCase();
 
@@ -31,7 +32,12 @@ const limiter = rateLimit({
 
 const app = express();
 app.use(cors());
-app.use('/api', limiter);
+app.use('/api/ai', limiter);
+
+app.get('/api/products', (_req, res) => {
+  res.json(PRODUCTS);
+});
+
 app.use(
   '/api',
   createReactAiRouter({

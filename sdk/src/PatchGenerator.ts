@@ -29,11 +29,11 @@ Generate a patch object with only AI-writable props that satisfies the user's re
 
     const { toolCalls } = await generateText({
       model: this.model,
-      maxTokens: 1024,
+      maxOutputTokens: 1024,
       tools: {
         generate_patch: tool({
           description: `Generate a props patch for the "${manifest.key}" component. Only include AI-writable props: ${manifest.aiWritableProps.join(', ')}.`,
-          parameters: jsonSchema<Record<string, unknown>>(manifest.propsJsonSchema),
+          inputSchema: jsonSchema<Record<string, unknown>>(manifest.propsJsonSchema),
         }),
       },
       toolChoice: { type: 'tool', toolName: 'generate_patch' },
@@ -45,6 +45,6 @@ Generate a patch object with only AI-writable props that satisfies the user's re
       throw new Error('LLM did not return a tool_use block for patch generation');
     }
 
-    return toolCall.args as Record<string, unknown>;
+    return toolCall.input as Record<string, unknown>;
   }
 }

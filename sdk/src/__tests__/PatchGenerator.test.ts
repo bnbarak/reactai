@@ -19,7 +19,7 @@ describe('PatchGenerator', () => {
   describe('generate', () => {
     it('generate_validPrompt_returnsPatch', async () => {
       mockGenerateText.mockResolvedValue({
-        toolCalls: [{ toolName: 'generate_patch', args: { title: 'AI Title', body: 'AI Body' } }],
+        toolCalls: [{ toolName: 'generate_patch', input: { title: 'AI Title', body: 'AI Body' } }],
       });
       const generator = new PatchGenerator({} as unknown as LanguageModel);
 
@@ -32,7 +32,7 @@ describe('PatchGenerator', () => {
 
     it('generate_withValidationError_includesErrorInPrompt', async () => {
       mockGenerateText.mockResolvedValue({
-        toolCalls: [{ toolName: 'generate_patch', args: { title: 'Fixed' } }],
+        toolCalls: [{ toolName: 'generate_patch', input: { title: 'Fixed' } }],
       });
       const generator = new PatchGenerator({} as unknown as LanguageModel);
 
@@ -58,7 +58,7 @@ describe('PatchGenerator', () => {
 
     it('generate_called_passesModelToGenerateText', async () => {
       mockGenerateText.mockResolvedValue({
-        toolCalls: [{ toolName: 'generate_patch', args: { title: 'x' } }],
+        toolCalls: [{ toolName: 'generate_patch', input: { title: 'x' } }],
       });
       const fakeModel = { fake: true } as unknown as LanguageModel;
       const generator = new PatchGenerator(fakeModel);

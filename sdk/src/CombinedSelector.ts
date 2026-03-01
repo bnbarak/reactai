@@ -74,12 +74,12 @@ Select the most appropriate component instance to modify and generate a patch wi
 
     const { toolCalls } = await generateText({
       model: this.model,
-      maxTokens: 1024,
+      maxOutputTokens: 1024,
       tools: {
         select_and_patch: tool({
           description:
             'Select the component instance to modify and generate the props patch in one step',
-          parameters: z.object({
+          inputSchema: z.object({
             key: z
               .string()
               .describe(`Component key to modify — must be one of: ${availableKeys}`),
@@ -113,6 +113,6 @@ Select the most appropriate component instance to modify and generate a patch wi
       throw new Error('LLM did not return a tool_use block for combined selection');
     }
 
-    return toolCall.args as CombinedResult;
+    return toolCall.input as CombinedResult;
   }
 }

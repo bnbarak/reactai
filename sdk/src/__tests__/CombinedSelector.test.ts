@@ -266,6 +266,6 @@ const setupMock = (result: {
   intent?: string;
 }) => {
   mockGenerateText.mockResolvedValue({
-    toolCalls: [{ toolName: 'select_and_patch', args: result }],
+    toolCalls: [{ toolName: 'select_and_patch', input: result }],
   });
 };

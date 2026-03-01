@@ -282,7 +282,7 @@ describe('ReactAiSdk', () => {
 
 const createSdk = () => {
   const sdk = new ReactAiSdk({} as never);
-  const combinedSelector = (sdk as never)['combinedSelector'];
-  const retryValidator = (sdk as never)['retryValidator'];
+  const combinedSelector = (sdk as any)['combinedSelector'];
+  const retryValidator = (sdk as any)['retryValidator'];
   return { sdk, combinedSelector, retryValidator };
 };

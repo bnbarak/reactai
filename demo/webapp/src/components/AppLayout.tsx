@@ -9,8 +9,9 @@ import { DashboardPage } from '../pages/DashboardPage.js';
 import { KanbanPage } from '../pages/KanbanPage.js';
 import { StorePage } from '../pages/StorePage.js';
 import { MusicPage } from '../pages/MusicPage.js';
+import { SearchPage } from '../pages/SearchPage.js';
 
-type Page = 'portfolio' | 'tictactoe' | 'settings' | 'dashboard' | 'store' | 'kanban' | 'music';
+type Page = 'portfolio' | 'tictactoe' | 'settings' | 'dashboard' | 'store' | 'kanban' | 'music' | 'search';
 
 const PAGE_LABELS: Record<Page, string> = {
   portfolio: 'Portfolio',
@@ -20,6 +21,7 @@ const PAGE_LABELS: Record<Page, string> = {
   store: 'Store',
   kanban: 'Kanban',
   music: 'Music',
+  search: 'Search',
 };
 
 /**
@@ -89,8 +91,10 @@ const AppLayoutInner = ({ activePage }: AppLayoutProps) => {
               <StorePage />
             ) : page === 'kanban' ? (
               <KanbanPage />
-            ) : (
+            ) : page === 'music' ? (
               <MusicPage />
+            ) : (
+              <SearchPage />
             )}
           </motion.div>
         </AnimatePresence>
