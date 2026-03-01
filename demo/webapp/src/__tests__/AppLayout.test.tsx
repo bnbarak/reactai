@@ -1,8 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import type { SseEvent } from 'react-ai-core';
 
 const { mockSubscribe, mockConnect, mockDisconnect } = vi.hoisted(() => ({
   mockSubscribe: vi.fn(),
@@ -21,17 +20,8 @@ vi.mock('@bnbarak/reactai/react', () => ({
   useSession: () => ({ sessionId: 'test-session', serverUrl: 'http://localhost:3001/api' }),
   SessionProvider: ({ children }: { children: React.ReactNode }) => children,
   snapshotRegistry: { set: mockSet, remove: mockRemove, getAll: mockGetAll },
-  useStateWithAi: (description: string, initialState: Record<string, unknown>) => {
+  useStateWithAi: (_description: string, initialState: Record<string, unknown>) => {
     const [state, setState] = React.useState(initialState);
-    React.useEffect(() => {
-      const key = description.toLowerCase().replace(/\s+/g, '-');
-      const unsub = mockSubscribe(key, (event: SseEvent) => {
-        if (event.type === 'patch') setState((s) => ({ ...s, ...event.patch }));
-        if (event.type === 'snapshot') setState(event.state as Record<string, unknown>);
-      });
-      return unsub;
-      // eslint-disable-next-line react-hooks/exhaustive-deps -- test mock, subscribe once on mount
-    }, []);
     return [state, setState, { current: null }];
   },
   useAiMarker: vi.fn(),
@@ -44,14 +34,41 @@ vi.mock('motion/react', () => ({
     {
       get:
         (_: object, tag: string) =>
-        ({
-          children,
-          ...rest
-        }: React.HTMLAttributes<HTMLElement> & { children?: React.ReactNode }) =>
-          React.createElement(tag as keyof JSX.IntrinsicElements, rest, children),
+        ({ children, ...rest }: { children?: React.ReactNode } & Record<string, unknown>) =>
+          React.createElement(tag, rest, children),
     },
   ),
   AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
+}));
+
+vi.mock('chess.js', () => ({
+  Chess: class {
+    fen() {
+      return 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+    }
+    turn() {
+      return 'w';
+    }
+    moves() {
+      return [];
+    }
+    move() {
+      return null;
+    }
+    isGameOver() {
+      return false;
+    }
+    isCheckmate() {
+      return false;
+    }
+    isDraw() {
+      return false;
+    }
+    isCheck() {
+      return false;
+    }
+    reset() {}
+  },
 }));
 
 import { AppLayout } from '../components/AppLayout.js';
@@ -60,48 +77,30 @@ describe('AppLayout', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockSubscribe.mockReturnValue(() => {});
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => [] }));
   });
 
-  it('appLayout_default_showsPortfolioPage', async () => {
-    render(<AppLayout activePage="portfolio" />);
-
-    await waitFor(() => expect(screen.getByText('My Portfolio')).toBeTruthy());
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
-  it('appLayout_clickDashboard_showsDashboard', async () => {
-    render(<AppLayout activePage="portfolio" />);
+  it('appLayout_defaultSearch_showsSearchPage', async () => {
+    render(<AppLayout activePage="search" />);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Dashboard' }));
-
-    await waitFor(() =>
-      expect(screen.getByRole('heading', { name: 'Analytics Dashboard' })).toBeTruthy(),
-    );
+    await waitFor(() => expect(screen.getByPlaceholderText(/search/i)).toBeTruthy());
   });
 
-  it('appLayout_aiSsePatch_updatesComponentState', async () => {
-    const capturedHandlers: Array<(e: SseEvent) => void> = [];
-    mockSubscribe.mockImplementation((_: string, handler: (e: SseEvent) => void) => {
-      capturedHandlers.push(handler);
-      return () => {};
-    });
+  it('appLayout_clickChess_showsChessPage', async () => {
+    render(<AppLayout activePage="search" />);
 
-    render(<AppLayout activePage="portfolio" />);
+    await userEvent.click(screen.getByRole('button', { name: 'Chess' }));
 
-    await userEvent.click(screen.getByRole('button', { name: 'Settings' }));
-    await waitFor(() => expect(capturedHandlers.length).toBeGreaterThan(0));
+    await waitFor(() => expect(screen.getByText('AI level:')).toBeTruthy());
+  });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Profile' }));
+  it('appLayout_activePage_chess_showsChessPage', async () => {
+    render(<AppLayout activePage="chess" />);
 
-    act(() => {
-      const event: SseEvent = {
-        type: 'patch',
-        key: 'user-profile-settings',
-        instanceId: 'user-profile-settings',
-        patch: { username: 'alice' },
-      };
-      capturedHandlers.forEach((h) => h(event));
-    });
-
-    expect(screen.getByDisplayValue('alice')).toBeTruthy();
+    await waitFor(() => expect(screen.getByText('AI level:')).toBeTruthy());
   });
 });

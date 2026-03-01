@@ -10,7 +10,7 @@ Get up and running in 5 minutes.
 
 - Node.js 18+
 - An existing Express + React app
-- Anthropic API key
+- An API key for Anthropic or OpenAI
 
 ## 1. Install packages
 
@@ -53,11 +53,11 @@ npm run scan
 import express from 'express'
 import { createReactAiRouter } from '@bnbarak/reactai/server'
 import { ReactAiSdk } from '@bnbarak/reactai/sdk'
-import Anthropic from '@anthropic-ai/sdk'
+import { anthropic } from '@ai-sdk/anthropic'
 
 const app = express()
 
-const sdk = new ReactAiSdk(new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }))
+const sdk = new ReactAiSdk(anthropic('claude-haiku-4-5-20251001'))
 
 app.use('/api', createReactAiRouter({
   registryPath: './registry.json',

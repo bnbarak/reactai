@@ -1,25 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { reactAI } from '@bnbarak/reactai/react';
 import { useAiMarker } from '@bnbarak/reactai/react';
-import { TicTacToePage } from '../pages/TicTacToePage.js';
-import { PortfolioPage } from '../pages/PortfolioPage.js';
-import { SettingsPage } from '../pages/SettingsPage.js';
-import { DashboardPage } from '../pages/DashboardPage.js';
-import { KanbanPage } from '../pages/KanbanPage.js';
-import { StorePage } from '../pages/StorePage.js';
-import { MusicPage } from '../pages/MusicPage.js';
+import { SearchPage } from '../pages/SearchPage.js';
+import { ChessPage } from '../pages/ChessPage.js';
 
-type Page = 'portfolio' | 'tictactoe' | 'settings' | 'dashboard' | 'store' | 'kanban' | 'music';
+type Page = 'search' | 'chess';
 
 const PAGE_LABELS: Record<Page, string> = {
-  portfolio: 'Portfolio',
-  tictactoe: 'Tic-Tac-Toe',
-  settings: 'Settings',
-  dashboard: 'Dashboard',
-  store: 'Store',
-  kanban: 'Kanban',
-  music: 'Music',
+  search: 'Search',
+  chess: 'Chess',
 };
 
 /**
@@ -77,21 +67,7 @@ const AppLayoutInner = ({ activePage }: AppLayoutProps) => {
             transition={{ duration: 0.2, ease: 'easeOut' }}
             style={{ position: 'absolute', inset: 0, overflowY: 'auto' }}
           >
-            {page === 'portfolio' ? (
-              <PortfolioPage />
-            ) : page === 'tictactoe' ? (
-              <TicTacToePage />
-            ) : page === 'settings' ? (
-              <SettingsPage />
-            ) : page === 'dashboard' ? (
-              <DashboardPage />
-            ) : page === 'store' ? (
-              <StorePage />
-            ) : page === 'kanban' ? (
-              <KanbanPage />
-            ) : (
-              <MusicPage />
-            )}
+            {page === 'chess' ? <ChessPage /> : <SearchPage />}
           </motion.div>
         </AnimatePresence>
       </div>

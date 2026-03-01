@@ -4,6 +4,8 @@ AI-controlled React components — closed-loop prop patching via LLM.
 
 Send a plain-English prompt. The AI finds the right component, generates a validated patch, and React re-renders. No glue code.
 
+**[Live demo →](https://reactai-demo-1076364960583.us-central1.run.app)**
+
 ```bash
 npm install @bnbarak/reactai
 ```
@@ -17,7 +19,7 @@ User prompt → LLM selects component + generates patch → validated → SSE �
 1. **Bridge** — React hooks and HOC that register components and apply SSE patches
 2. **Server** — Express router that handles sessions, SSE, patch validation, and AI prompts
 3. **Scanner** — Build-time AST scanner that extracts component metadata into `registry.json`
-4. **SDK** — LLM orchestration via Anthropic API
+4. **SDK** — LLM orchestration via the Vercel AI SDK (Anthropic, OpenAI, and more)
 
 ## Quickstart
 
@@ -39,11 +41,11 @@ npx react-ai-scan src/ ./registry.json
 import express from 'express'
 import { createReactAiRouter } from '@bnbarak/reactai/server'
 import { ReactAiSdk } from '@bnbarak/reactai/sdk'
-import Anthropic from '@anthropic-ai/sdk'
+import { anthropic } from '@ai-sdk/anthropic'
 
 const app = express()
 
-const sdk = new ReactAiSdk(new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }))
+const sdk = new ReactAiSdk(anthropic('claude-haiku-4-5-20251001'))
 
 app.use('/api', createReactAiRouter({
   registryPath: './registry.json',

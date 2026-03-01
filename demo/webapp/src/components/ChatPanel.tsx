@@ -17,42 +17,19 @@ interface Message {
 
 const PROMPT_GROUPS: Array<{ page: string; prompts: string[] }> = [
   {
-    page: 'Portfolio',
+    page: 'Search',
     prompts: [
-      'Go to Portfolio tab and change AAPL price to 210',
-      'Go to Portfolio tab and make it look like a bad week',
+      'Show only DeWalt Power Tools under $200',
+      'Filter for in-stock items on sale with 4+ stars',
+      'Sort flooring by price low to high',
+      'Find Milwaukee hand tools under $50',
     ],
   },
   {
-    page: 'Dashboard',
+    page: 'Chess',
     prompts: [
-      'Go to Dashboard tab and simulate a bad week for the metrics',
-      'Go to Dashboard tab and show a security incident alert',
-      'Go to Dashboard tab and spike Friday activity to 99',
-    ],
-  },
-  {
-    page: 'Kanban',
-    prompts: [
-      'Go to Kanban tab and move the login bug to done',
-      "Go to Kanban tab and reassign all of alice's tasks to bob",
-      'Go to Kanban tab and mark all high priority cards as done',
-    ],
-  },
-  {
-    page: 'Store',
-    prompts: [
-      'Go to Store tab and feature the headphones on sale for $69',
-      'Go to Store tab and run a flash sale — cut all prices 30%',
-      'Go to Store tab and change the banner to announce free shipping',
-    ],
-  },
-  {
-    page: 'Music',
-    prompts: [
-      'Go to Music tab and switch to chill mode',
-      "Go to Music tab, I'm feeling sad — change the mood",
-      'Go to Music tab and play track 3 at volume 90',
+      'Go to Chess tab and set the AI to 400 level',
+      'Go to Chess tab and set the AI to 2200 level',
     ],
   },
 ];
@@ -132,6 +109,7 @@ export const ChatPanel = () => {
           if (!isDone) await new Promise((r) => setTimeout(r, INTER_TURN_DELAY_MS));
         }
       } catch (err) {
+        console.error('[ChatPanel] doSubmit error:', err);
         const error = err instanceof Error ? err.message : 'network error';
         replies.push(`[${turns}] ✗ ${error}`);
         addTurn({ turn: turns, success: false, error });

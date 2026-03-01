@@ -65,6 +65,7 @@ export function createAiRouter(
         currentUrl,
       );
     } catch (err) {
+      console.error('[reactAI] /ai/prompt error:', err);
       const message = err instanceof Error ? err.message : String(err);
       res.json({ applied: false, target: null, patch: null, errors: [message], isDone: true });
       return;

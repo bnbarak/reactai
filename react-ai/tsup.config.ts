@@ -11,5 +11,5 @@ export default defineConfig({
   dts: true,
   clean: true,
   tsconfig: './tsconfig.json',
-  external: ['react', 'react-dom'],
+  external: ['react', 'react-dom', 'ai', '@ai-sdk/anthropic', '@ai-sdk/openai'],
 });
