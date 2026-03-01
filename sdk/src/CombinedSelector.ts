@@ -80,9 +80,7 @@ Select the most appropriate component instance to modify and generate a patch wi
           description:
             'Select the component instance to modify and generate the props patch in one step',
           inputSchema: z.object({
-            key: z
-              .string()
-              .describe(`Component key to modify — must be one of: ${availableKeys}`),
+            key: z.string().describe(`Component key to modify — must be one of: ${availableKeys}`),
             instanceId: z
               .string()
               .describe('Instance ID to target — must be from the mounted instances list'),

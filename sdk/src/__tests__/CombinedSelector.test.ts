@@ -34,7 +34,12 @@ describe('CombinedSelector', () => {
     });
 
     it('select_multipleInstances_returnsSpecificInstance', async () => {
-      setupMock({ key: 'stock-position', instanceId: 'inst-2', patch: { currentPrice: 210 }, done: true });
+      setupMock({
+        key: 'stock-position',
+        instanceId: 'inst-2',
+        patch: { currentPrice: 210 },
+        done: true,
+      });
       const selector = createSelector();
 
       const result = await selector.select(
@@ -73,9 +78,7 @@ describe('CombinedSelector', () => {
         [TestUtil.createInstance('demo-card', 'inst-1')],
       );
 
-      expect(mockGenerateText).toHaveBeenCalledWith(
-        expect.objectContaining({ model: fakeModel }),
-      );
+      expect(mockGenerateText).toHaveBeenCalledWith(expect.objectContaining({ model: fakeModel }));
     });
 
     it('select_called_includesMountedInstancesInPrompt', async () => {
@@ -107,7 +110,12 @@ describe('CombinedSelector', () => {
     });
 
     it('select_instanceWithContext_includesOptionsInPrompt', async () => {
-      setupMock({ key: 'theme-selector', instanceId: 'theme-selector', patch: { selected: 'dark' }, done: true });
+      setupMock({
+        key: 'theme-selector',
+        instanceId: 'theme-selector',
+        patch: { selected: 'dark' },
+        done: true,
+      });
       const selector = createSelector();
 
       await selector.select(

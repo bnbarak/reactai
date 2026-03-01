@@ -73,3 +73,5 @@ The scanner reads your TypeScript source at build time and extracts the annotati
 ## Get started
 
 [Quickstart →](quickstart.md) — up and running in 5 minutes.
+
+[Live demo →](https://reactai-demo-1076364960583.us-central1.run.app)

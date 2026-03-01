@@ -23,7 +23,7 @@ const App = () => {
             }}
           >
             <ChatPanel />
-            <AppLayout activePage="portfolio" />
+            <AppLayout activePage="search" />
             <DebugPanel />
           </div>
           <LoadingBar />

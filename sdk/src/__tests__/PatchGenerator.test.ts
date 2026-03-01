@@ -65,9 +65,7 @@ describe('PatchGenerator', () => {
 
       await generator.generate('test', TestUtil.createManifest(), {});
 
-      expect(mockGenerateText).toHaveBeenCalledWith(
-        expect.objectContaining({ model: fakeModel }),
-      );
+      expect(mockGenerateText).toHaveBeenCalledWith(expect.objectContaining({ model: fakeModel }));
     });
   });
 });

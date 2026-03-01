@@ -34,22 +34,97 @@ const ALL_CATEGORIES = [
 ];
 
 const ALL_BRANDS = [
-  '3M', 'American Standard', 'Andersen', 'Armstrong', 'Behr', 'Black+Decker',
-  'Bosch', 'CertainTeed', 'Charlotte Pipe', 'Channellock', 'ClosetMaid',
-  'Commercial Electric', 'Craftsman', 'Cree', 'Delta', 'DeWalt', 'Eastman',
-  'Eaton', 'EGO', 'Everbilt', 'Fiskars', 'FrogTape', 'Gardner Bender', 'GE',
-  'Georgia-Pacific', 'Glacier Bay', 'Halo', 'Hampton Bay', 'Hillman', 'Hubbell',
-  'Husqvarna', 'Husky', 'Ideal', 'Irwin', 'James Hardie', 'JELD-WEN',
-  'Kingston Brass', 'Klein Tools', 'Kobalt', 'Kohler', 'Laticrete', 'Larson',
-  'Leviton', 'Liberty', 'LifeProof', 'LP Building', 'Lutron', 'Makita',
-  'Masonite', 'Merola', 'Milwaukee', 'Moen', 'Mohawk', 'Mueller',
-  'National Gypsum', 'National Hardware', 'Nibco', 'Owens Corning',
-  'Pass & Seymour', 'Pella', 'Pemko', 'Pergo', 'Pfister', 'Philips',
-  'Prime-Line', 'Progress Lighting', 'Purdy', 'Quikrete', 'ReliaBilt',
-  'Richelieu', 'Ridgid', 'Rust-Oleum', 'Ryobi', 'Schlage', 'Shaw',
-  'SharkBite', 'Siemens', 'Sioux Chief', 'Stanley', 'Sun Joe', 'Tekton',
-  'Therma-Tru', 'Toro', 'Toto', 'TrafficMaster', 'Troy-Bilt', 'USG',
-  'Valspar', 'Watts', 'Wooster', 'Zinsser',
+  '3M',
+  'American Standard',
+  'Andersen',
+  'Armstrong',
+  'Behr',
+  'Black+Decker',
+  'Bosch',
+  'CertainTeed',
+  'Charlotte Pipe',
+  'Channellock',
+  'ClosetMaid',
+  'Commercial Electric',
+  'Craftsman',
+  'Cree',
+  'Delta',
+  'DeWalt',
+  'Eastman',
+  'Eaton',
+  'EGO',
+  'Everbilt',
+  'Fiskars',
+  'FrogTape',
+  'Gardner Bender',
+  'GE',
+  'Georgia-Pacific',
+  'Glacier Bay',
+  'Halo',
+  'Hampton Bay',
+  'Hillman',
+  'Hubbell',
+  'Husqvarna',
+  'Husky',
+  'Ideal',
+  'Irwin',
+  'James Hardie',
+  'JELD-WEN',
+  'Kingston Brass',
+  'Klein Tools',
+  'Kobalt',
+  'Kohler',
+  'Laticrete',
+  'Larson',
+  'Leviton',
+  'Liberty',
+  'LifeProof',
+  'LP Building',
+  'Lutron',
+  'Makita',
+  'Masonite',
+  'Merola',
+  'Milwaukee',
+  'Moen',
+  'Mohawk',
+  'Mueller',
+  'National Gypsum',
+  'National Hardware',
+  'Nibco',
+  'Owens Corning',
+  'Pass & Seymour',
+  'Pella',
+  'Pemko',
+  'Pergo',
+  'Pfister',
+  'Philips',
+  'Prime-Line',
+  'Progress Lighting',
+  'Purdy',
+  'Quikrete',
+  'ReliaBilt',
+  'Richelieu',
+  'Ridgid',
+  'Rust-Oleum',
+  'Ryobi',
+  'Schlage',
+  'Shaw',
+  'SharkBite',
+  'Siemens',
+  'Sioux Chief',
+  'Stanley',
+  'Sun Joe',
+  'Tekton',
+  'Therma-Tru',
+  'Toro',
+  'Toto',
+  'TrafficMaster',
+  'Troy-Bilt',
+  'USG',
+  'Valspar',
+  'Watts',
+  'Wooster',
+  'Zinsser',
 ];
 
 interface SearchProductCardProps {
@@ -154,7 +229,9 @@ const SearchProductCard = ({ product }: SearchProductCardProps) => (
           {'★'.repeat(Math.round(product.rating))}
           {'☆'.repeat(5 - Math.round(product.rating))}
         </span>
-        <span style={{ fontSize: 10, color: '#888' }}>({product.reviewCount.toLocaleString()})</span>
+        <span style={{ fontSize: 10, color: '#888' }}>
+          ({product.reviewCount.toLocaleString()})
+        </span>
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
         <span style={{ fontSize: 16, fontWeight: 'bold' }}>${product.price.toFixed(2)}</span>
@@ -344,7 +421,15 @@ export const SearchPage = () => {
   ];
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'monospace', overflow: 'hidden' }}>
+    <div
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        fontFamily: 'monospace',
+        overflow: 'hidden',
+      }}
+    >
       {/* Search bar + sort row */}
       <div
         ref={searchRef as React.RefObject<HTMLDivElement>}
@@ -441,10 +526,7 @@ export const SearchPage = () => {
           }}
         >
           {/* Category */}
-          <div
-            ref={categoryRef as React.RefObject<HTMLDivElement>}
-            style={{ marginBottom: 22 }}
-          >
+          <div ref={categoryRef as React.RefObject<HTMLDivElement>} style={{ marginBottom: 22 }}>
             <FilterSectionHeader label="Category" />
             {['All', ...ALL_CATEGORIES].map((cat) => (
               <label
@@ -473,10 +555,7 @@ export const SearchPage = () => {
           </div>
 
           {/* Brand */}
-          <div
-            ref={brandRef as React.RefObject<HTMLDivElement>}
-            style={{ marginBottom: 22 }}
-          >
+          <div ref={brandRef as React.RefObject<HTMLDivElement>} style={{ marginBottom: 22 }}>
             <FilterSectionHeader label="Brand" />
             <select
               value={String(brandState.activeBrand)}
@@ -502,18 +581,13 @@ export const SearchPage = () => {
           </div>
 
           {/* Price range */}
-          <div
-            ref={priceRef as React.RefObject<HTMLDivElement>}
-            style={{ marginBottom: 22 }}
-          >
+          <div ref={priceRef as React.RefObject<HTMLDivElement>} style={{ marginBottom: 22 }}>
             <FilterSectionHeader label="Price" />
             <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 8 }}>
               <input
                 type="number"
                 value={Number(priceState.minPrice)}
-                onChange={(e) =>
-                  setPriceState({ ...priceState, minPrice: Number(e.target.value) })
-                }
+                onChange={(e) => setPriceState({ ...priceState, minPrice: Number(e.target.value) })}
                 placeholder="Min"
                 min={0}
                 style={{
@@ -530,9 +604,7 @@ export const SearchPage = () => {
               <input
                 type="number"
                 value={Number(priceState.maxPrice)}
-                onChange={(e) =>
-                  setPriceState({ ...priceState, maxPrice: Number(e.target.value) })
-                }
+                onChange={(e) => setPriceState({ ...priceState, maxPrice: Number(e.target.value) })}
                 placeholder="Max"
                 min={0}
                 style={{
@@ -562,10 +634,7 @@ export const SearchPage = () => {
           </div>
 
           {/* Rating + Availability combined — one aiRef for both */}
-          <div
-            ref={availRef as React.RefObject<HTMLDivElement>}
-            style={{ marginBottom: 22 }}
-          >
+          <div ref={availRef as React.RefObject<HTMLDivElement>} style={{ marginBottom: 22 }}>
             <FilterSectionHeader label="Rating" />
             {([0, 3, 3.5, 4, 4.5] as number[]).map((r) => (
               <label
@@ -615,9 +684,7 @@ export const SearchPage = () => {
                 <input
                   type="checkbox"
                   checked={Boolean(availState.inStockOnly)}
-                  onChange={(e) =>
-                    setAvailState({ ...availState, inStockOnly: e.target.checked })
-                  }
+                  onChange={(e) => setAvailState({ ...availState, inStockOnly: e.target.checked })}
                   style={{ margin: 0 }}
                 />
                 In Stock Only
@@ -634,9 +701,7 @@ export const SearchPage = () => {
                 <input
                   type="checkbox"
                   checked={Boolean(availState.onSaleOnly)}
-                  onChange={(e) =>
-                    setAvailState({ ...availState, onSaleOnly: e.target.checked })
-                  }
+                  onChange={(e) => setAvailState({ ...availState, onSaleOnly: e.target.checked })}
                   style={{ margin: 0 }}
                 />
                 On Sale Only
@@ -761,7 +826,14 @@ export const SearchPage = () => {
                   </button>
 
                   {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
-                    const p = totalPages <= 7 ? i + 1 : page <= 4 ? i + 1 : page >= totalPages - 3 ? totalPages - 6 + i : page - 3 + i;
+                    const p =
+                      totalPages <= 7
+                        ? i + 1
+                        : page <= 4
+                          ? i + 1
+                          : page >= totalPages - 3
+                            ? totalPages - 6 + i
+                            : page - 3 + i;
                     return (
                       <button
                         key={p}

@@ -173,18 +173,126 @@ const PRODUCT_TYPES: Record<string, string[]> = {
 };
 
 const CATEGORY_BRANDS: Record<string, string[]> = {
-  'Power Tools': ['DeWalt', 'Milwaukee', 'Makita', 'Bosch', 'Ridgid', 'Ryobi', 'Craftsman', 'Black+Decker'],
-  'Hand Tools': ['Stanley', 'Klein Tools', 'Irwin', 'Craftsman', 'Tekton', 'Husky', 'Kobalt', 'Channellock'],
-  'Building Materials': ['Georgia-Pacific', 'USG', 'Quikrete', 'National Gypsum', 'Owens Corning', 'James Hardie', 'LP Building', 'CertainTeed'],
-  Plumbing: ['SharkBite', 'Charlotte Pipe', 'Nibco', 'Watts', 'Sioux Chief', 'Mueller', 'Eastman', 'Everbilt'],
-  Electrical: ['Southwire', 'Leviton', 'Siemens', 'Eaton', 'Pass & Seymour', 'Ideal', 'Gardner Bender', 'Hubbell'],
-  'Paint & Supplies': ['Behr', 'Rust-Oleum', 'Valspar', 'Zinsser', '3M', 'Purdy', 'FrogTape', 'Wooster'],
-  Flooring: ['Pergo', 'Armstrong', 'LifeProof', 'Shaw', 'Mohawk', 'TrafficMaster', 'Merola', 'Laticrete'],
-  Lighting: ['GE', 'Philips', 'Lutron', 'Hampton Bay', 'Progress Lighting', 'Halo', 'Cree', 'Commercial Electric'],
-  Hardware: ['Everbilt', 'Hillman', 'Richelieu', 'Liberty', 'National Hardware', 'Prime-Line', 'ClosetMaid', 'Schlage'],
-  'Outdoor & Garden': ['Craftsman', 'Husqvarna', 'Toro', 'Orbit', 'Fiskars', 'Sun Joe', 'EGO', 'Troy-Bilt'],
-  'Doors & Windows': ['JELD-WEN', 'Masonite', 'Andersen', 'Pella', 'ReliaBilt', 'Larson', 'Pemko', 'Therma-Tru'],
-  'Kitchen & Bath': ['Moen', 'Delta', 'Kohler', 'American Standard', 'Pfister', 'Glacier Bay', 'Kingston Brass', 'Toto'],
+  'Power Tools': [
+    'DeWalt',
+    'Milwaukee',
+    'Makita',
+    'Bosch',
+    'Ridgid',
+    'Ryobi',
+    'Craftsman',
+    'Black+Decker',
+  ],
+  'Hand Tools': [
+    'Stanley',
+    'Klein Tools',
+    'Irwin',
+    'Craftsman',
+    'Tekton',
+    'Husky',
+    'Kobalt',
+    'Channellock',
+  ],
+  'Building Materials': [
+    'Georgia-Pacific',
+    'USG',
+    'Quikrete',
+    'National Gypsum',
+    'Owens Corning',
+    'James Hardie',
+    'LP Building',
+    'CertainTeed',
+  ],
+  Plumbing: [
+    'SharkBite',
+    'Charlotte Pipe',
+    'Nibco',
+    'Watts',
+    'Sioux Chief',
+    'Mueller',
+    'Eastman',
+    'Everbilt',
+  ],
+  Electrical: [
+    'Southwire',
+    'Leviton',
+    'Siemens',
+    'Eaton',
+    'Pass & Seymour',
+    'Ideal',
+    'Gardner Bender',
+    'Hubbell',
+  ],
+  'Paint & Supplies': [
+    'Behr',
+    'Rust-Oleum',
+    'Valspar',
+    'Zinsser',
+    '3M',
+    'Purdy',
+    'FrogTape',
+    'Wooster',
+  ],
+  Flooring: [
+    'Pergo',
+    'Armstrong',
+    'LifeProof',
+    'Shaw',
+    'Mohawk',
+    'TrafficMaster',
+    'Merola',
+    'Laticrete',
+  ],
+  Lighting: [
+    'GE',
+    'Philips',
+    'Lutron',
+    'Hampton Bay',
+    'Progress Lighting',
+    'Halo',
+    'Cree',
+    'Commercial Electric',
+  ],
+  Hardware: [
+    'Everbilt',
+    'Hillman',
+    'Richelieu',
+    'Liberty',
+    'National Hardware',
+    'Prime-Line',
+    'ClosetMaid',
+    'Schlage',
+  ],
+  'Outdoor & Garden': [
+    'Craftsman',
+    'Husqvarna',
+    'Toro',
+    'Orbit',
+    'Fiskars',
+    'Sun Joe',
+    'EGO',
+    'Troy-Bilt',
+  ],
+  'Doors & Windows': [
+    'JELD-WEN',
+    'Masonite',
+    'Andersen',
+    'Pella',
+    'ReliaBilt',
+    'Larson',
+    'Pemko',
+    'Therma-Tru',
+  ],
+  'Kitchen & Bath': [
+    'Moen',
+    'Delta',
+    'Kohler',
+    'American Standard',
+    'Pfister',
+    'Glacier Bay',
+    'Kingston Brass',
+    'Toto',
+  ],
 };
 
 const PRICE_RANGES: Record<string, [number, number]> = {
@@ -230,7 +338,9 @@ function generateProducts(): Product[] {
 
         const basePrice = randInRange(minP, maxP, seed);
         const onSale = seeded(seed + 1) > 0.7;
-        const price = onSale ? +(basePrice * (1 - randInRange(0.1, 0.35, seed + 2))).toFixed(2) : basePrice;
+        const price = onSale
+          ? +(basePrice * (1 - randInRange(0.1, 0.35, seed + 2))).toFixed(2)
+          : basePrice;
         const originalPrice = onSale ? basePrice : basePrice;
         const rating = +(3.0 + seeded(seed + 3) * 2.0).toFixed(1);
         const reviewCount = Math.floor(seeded(seed + 4) * 4998) + 1;
@@ -263,6 +373,4 @@ export const PRODUCTS: Product[] = generateProducts();
 
 export const ALL_CATEGORIES = Object.keys(PRODUCT_TYPES);
 
-export const ALL_BRANDS = [
-  ...new Set(Object.values(CATEGORY_BRANDS).flat()),
-].sort();
+export const ALL_BRANDS = [...new Set(Object.values(CATEGORY_BRANDS).flat())].sort();

@@ -11,15 +11,14 @@ import { PRODUCTS } from './productsData.js';
 const provider = (process.env.AI_PROVIDER ?? 'anthropic').toLowerCase();
 
 if (provider === 'openai') {
-  if (!process.env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY is required when AI_PROVIDER=openai');
+  if (!process.env.OPENAI_API_KEY)
+    throw new Error('OPENAI_API_KEY is required when AI_PROVIDER=openai');
 } else {
   if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY is required');
 }
 
 const model =
-  provider === 'openai'
-    ? openai('gpt-4o-mini')
-    : anthropic('claude-haiku-4-5-20251001');
+  provider === 'openai' ? openai('gpt-4o-mini') : anthropic('claude-haiku-4-5-20251001');
 
 const sdk = new ReactAiSdk(model);
 

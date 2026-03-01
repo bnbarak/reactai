@@ -4,6 +4,8 @@ AI-controlled React components — closed-loop prop patching via LLM.
 
 Send a plain-English prompt. The AI finds the right component, generates a validated patch, and React re-renders. No glue code.
 
+**[Live demo →](https://reactai-demo-1076364960583.us-central1.run.app)**
+
 ```bash
 npm install @bnbarak/reactai
 ```

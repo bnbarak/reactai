@@ -17,51 +17,19 @@ interface Message {
 
 const PROMPT_GROUPS: Array<{ page: string; prompts: string[] }> = [
   {
-    page: 'Portfolio',
-    prompts: [
-      'Go to Portfolio tab and change AAPL price to 210',
-      'Go to Portfolio tab and make it look like a bad week',
-    ],
-  },
-  {
-    page: 'Dashboard',
-    prompts: [
-      'Go to Dashboard tab and simulate a bad week for the metrics',
-      'Go to Dashboard tab and show a security incident alert',
-      'Go to Dashboard tab and spike Friday activity to 99',
-    ],
-  },
-  {
-    page: 'Kanban',
-    prompts: [
-      'Go to Kanban tab and move the login bug to done',
-      "Go to Kanban tab and reassign all of alice's tasks to bob",
-      'Go to Kanban tab and mark all high priority cards as done',
-    ],
-  },
-  {
-    page: 'Store',
-    prompts: [
-      'Go to Store tab and feature the headphones on sale for $69',
-      'Go to Store tab and run a flash sale — cut all prices 30%',
-      'Go to Store tab and change the banner to announce free shipping',
-    ],
-  },
-  {
-    page: 'Music',
-    prompts: [
-      'Go to Music tab and switch to chill mode',
-      "Go to Music tab, I'm feeling sad — change the mood",
-      'Go to Music tab and play track 3 at volume 90',
-    ],
-  },
-  {
     page: 'Search',
     prompts: [
-      'Go to Search tab and show only DeWalt Power Tools under $200',
-      'Go to Search tab and filter for in-stock items on sale with 4+ stars',
-      'Go to Search tab and sort flooring by price low to high',
-      'Go to Search tab and find Milwaukee hand tools under $50',
+      'Show only DeWalt Power Tools under $200',
+      'Filter for in-stock items on sale with 4+ stars',
+      'Sort flooring by price low to high',
+      'Find Milwaukee hand tools under $50',
+    ],
+  },
+  {
+    page: 'Chess',
+    prompts: [
+      'Go to Chess tab and set the AI to 400 level',
+      'Go to Chess tab and set the AI to 2200 level',
     ],
   },
 ];
