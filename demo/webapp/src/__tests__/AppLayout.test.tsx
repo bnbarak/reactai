@@ -90,12 +90,12 @@ describe('AppLayout', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Chess' }));
 
-    await waitFor(() => expect(screen.getByText('Chess')).toBeTruthy());
+    await waitFor(() => expect(screen.getByText('AI level:')).toBeTruthy());
   });
 
   it('appLayout_activePage_chess_showsChessPage', async () => {
     render(<AppLayout activePage="chess" />);
 
-    await waitFor(() => expect(screen.getByText('Chess')).toBeTruthy());
+    await waitFor(() => expect(screen.getByText('AI level:')).toBeTruthy());
   });
 });
