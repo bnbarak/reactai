@@ -32,6 +32,15 @@ const PROMPT_GROUPS: Array<{ page: string; prompts: string[] }> = [
       'Go to Chess tab and set the AI to 2200 level',
     ],
   },
+  {
+    page: 'Search',
+    prompts: [
+      'Go to Search tab and show only DeWalt Power Tools under $200',
+      'Go to Search tab and filter for in-stock items on sale with 4+ stars',
+      'Go to Search tab and sort flooring by price low to high',
+      'Go to Search tab and find Milwaukee hand tools under $50',
+    ],
+  },
 ];
 
 export const ChatPanel = () => {
