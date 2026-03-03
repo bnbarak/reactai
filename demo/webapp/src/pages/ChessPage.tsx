@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Chess } from 'chess.js';
 import { useStateWithAi, useSession } from '@bnbarak/reactai/react';
-import { snapshotRegistry, markerRegistry, extractAccessibilityTree } from '@bnbarak/reactai/react';
+import { snapshotRegistry } from '@bnbarak/reactai/react';
 
 const ELO_LEVELS = [400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200];
 
@@ -62,46 +62,68 @@ export const ChessPage = () => {
     pendingMove: '',
   });
 
+  const callAiRef = useRef<(fen: string, lastMove: string) => Promise<void>>(async () => {});
+  const retryCountRef = useRef(0);
+
   useEffect(() => {
     const move = (aiState.pendingMove as string).trim();
     if (!move) return;
+    let moveApplied = false;
     try {
       const result = chess.move(move);
-      if (result) setFen(chess.fen());
+      if (result) {
+        setFen(chess.fen());
+        moveApplied = true;
+      }
     } catch {
-      // AI returned an invalid move — ignore
+      // invalid move — will retry below
     }
-    setThinking(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- chess is a stable useState instance
+    setAiState({ pendingMove: '' });
+    if (moveApplied) {
+      retryCountRef.current = 0;
+      setThinking(false);
+    } else if (retryCountRef.current < 3) {
+      retryCountRef.current += 1;
+      callAiRef.current(chess.fen(), '(retry — previous move was invalid)');
+    } else {
+      retryCountRef.current = 0;
+      setThinking(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- chess and setAiState are stable
   }, [aiState.pendingMove]);
 
   const callAi = useCallback(
     async (currentFen: string, lastMove: string) => {
       if (!sessionId) return;
       const snapshot = snapshotRegistry.getAll();
-      const markers = markerRegistry.getAll();
-      const accessibilityTree = extractAccessibilityTree();
+      const legalMoves = chess.moves();
       const prompt =
         `You are playing Black in a chess game at ${elo} ELO strength. ` +
         `White just played ${lastMove}. Current position FEN: ${currentFen}. ` +
-        `Make the best move for a ${elo}-rated player. ` +
-        `Patch pendingMove with your move in standard algebraic notation (SAN) only — ` +
-        `e.g. "e5", "Nf6", "Bxc4", "O-O". No other text.`;
-      await fetch(`${serverUrl}/ai/prompt`, {
+        `Legal moves available: ${legalMoves.join(', ')}. ` +
+        `Pick ONE move from the legal moves list that is best for a ${elo}-rated player. ` +
+        `Patch pendingMove with your chosen move exactly as written in the legal moves list. No other text.`;
+      const res = await fetch(`${serverUrl}/ai/prompt`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           sessionId,
           prompt,
           snapshot,
-          markers,
-          accessibilityTree,
           currentUrl: window.location.href,
         }),
       });
+      const result = await res.json();
+      if (!result.applied) {
+        setThinking(false);
+      }
     },
     [sessionId, serverUrl, elo],
   );
+
+  useEffect(() => {
+    callAiRef.current = callAi;
+  }, [callAi]);
 
   function handleSquareClick(row: number, col: number) {
     if (thinking || chess.isGameOver() || chess.turn() !== 'w') return;

@@ -23,6 +23,10 @@ const PROMPT_GROUPS: Array<{ page: string; prompts: string[] }> = [
       'Filter for in-stock items on sale with 4+ stars',
       'Sort flooring by price low to high',
       'Find Milwaukee hand tools under $50',
+      'Go to Search tab and show only DeWalt Power Tools under $200',
+      'Go to Search tab and filter for in-stock items on sale with 4+ stars',
+      'Go to Search tab and sort flooring by price low to high',
+      'Go to Search tab and find Milwaukee hand tools under $50',
     ],
   },
   {
@@ -30,15 +34,6 @@ const PROMPT_GROUPS: Array<{ page: string; prompts: string[] }> = [
     prompts: [
       'Go to Chess tab and set the AI to 400 level',
       'Go to Chess tab and set the AI to 2200 level',
-    ],
-  },
-  {
-    page: 'Search',
-    prompts: [
-      'Go to Search tab and show only DeWalt Power Tools under $200',
-      'Go to Search tab and filter for in-stock items on sale with 4+ stars',
-      'Go to Search tab and sort flooring by price low to high',
-      'Go to Search tab and find Milwaukee hand tools under $50',
     ],
   },
 ];
