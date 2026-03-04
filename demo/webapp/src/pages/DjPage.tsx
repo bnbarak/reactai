@@ -93,6 +93,39 @@ function scheduleStep(ctx: AudioContext, out: AudioNode, step: number, time: num
   if (pattern.bass[step])  playBass(ctx, out, time, bassFreq);
 }
 
+// ─── Human-readable activity log ─────────────────────────────────────────────
+
+type DjStateShape = {
+  deckATrackId: number; deckAPlaying: boolean;
+  deckBTrackId: number; deckBPlaying: boolean;
+  crossfader: number; volumeA: number; volumeB: number;
+  djNote: string; effectA: string; effectB: string;
+};
+
+function describeChanges(prev: DjStateShape, curr: DjStateShape): string {
+  const parts: string[] = [];
+  if (prev.deckATrackId !== curr.deckATrackId) parts.push(`A → ${TRACKS.find(t => t.id === curr.deckATrackId)?.title}`);
+  if (prev.deckBTrackId !== curr.deckBTrackId) parts.push(`B → ${TRACKS.find(t => t.id === curr.deckBTrackId)?.title}`);
+  if (prev.deckAPlaying !== curr.deckAPlaying) parts.push(curr.deckAPlaying ? 'Deck A started' : 'Deck A stopped');
+  if (prev.deckBPlaying !== curr.deckBPlaying) parts.push(curr.deckBPlaying ? 'Deck B started' : 'Deck B stopped');
+  if (Math.abs(prev.crossfader - curr.crossfader) > 3) {
+    const x = curr.crossfader;
+    parts.push(`crossfader → ${x < 20 ? 'full A' : x > 80 ? 'full B' : `${x}% toward B`}`);
+  }
+  if (Math.abs(prev.volumeA - curr.volumeA) > 3) parts.push(`vol A → ${curr.volumeA}`);
+  if (Math.abs(prev.volumeB - curr.volumeB) > 3) parts.push(`vol B → ${curr.volumeB}`);
+  if (prev.effectA !== curr.effectA) parts.push(`A filter: ${curr.effectA === 'off' ? 'off' : curr.effectA === 'low' ? 'bass boost' : 'hi-pass'}`);
+  if (prev.effectB !== curr.effectB) parts.push(`B filter: ${curr.effectB === 'off' ? 'off' : curr.effectB === 'low' ? 'bass boost' : 'hi-pass'}`);
+  return parts.join('  ·  ');
+}
+
+const MOODS = [
+  { label: 'BUILD', instruction: 'Slowly build energy — bring in both decks, gradually increase volumes, move crossfader toward center, prep a high-energy track.' },
+  { label: 'DROP',  instruction: 'Drop NOW — commit fully to the highest-energy track, max volumes, crossfader all the way, unleash the beat.' },
+  { label: 'CHILL', instruction: 'Cool it down — transition to deep house or the slowest track, lower volumes smoothly, slow crossfade.' },
+  { label: 'PEAK',  instruction: 'Peak time! Both decks at full tilt with the highest BPM tracks, max volumes, drive the crowd.' },
+];
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 const VuMeter = ({ playing, volume }: { playing: boolean; volume: number }) => {
@@ -166,8 +199,6 @@ const Deck = ({ side, trackId, playing, volume }: { side: 'A' | 'B'; trackId: nu
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 
-interface PatchEntry { time: string; fields: string }
-
 export const DjPage = () => {
   const { sessionId, serverUrl } = useSession();
 
@@ -182,14 +213,12 @@ export const DjPage = () => {
       volumeA: 80,
       volumeB: 80,
       djNote: 'Warming up the decks…',
+      effectA: 'off',
+      effectB: 'off',
     },
   );
 
-  const s = djState as {
-    deckATrackId: number; deckAPlaying: boolean;
-    deckBTrackId: number; deckBPlaying: boolean;
-    crossfader: number; volumeA: number; volumeB: number; djNote: string;
-  };
+  const s = djState as DjStateShape;
 
   // ── Audio engine ─────────────────────────────────────────────────────────
   const [audioOn, setAudioOn] = useState(false);
@@ -197,6 +226,8 @@ export const DjPage = () => {
   const ctxRef = useRef<AudioContext | null>(null);
   const gainARef = useRef<GainNode | null>(null);
   const gainBRef = useRef<GainNode | null>(null);
+  const filterARef = useRef<BiquadFilterNode | null>(null);
+  const filterBRef = useRef<BiquadFilterNode | null>(null);
   const masterGainRef = useRef<GainNode | null>(null);
   const schedulerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stepARef = useRef(0); const nextTimeARef = useRef(0);
@@ -242,6 +273,12 @@ export const DjPage = () => {
     const gA = ctx.createGain(); gA.gain.value = stateRef.current.volumeA / 100;
     const gB = ctx.createGain(); gB.gain.value = 0;
     gainARef.current = gA; gainBRef.current = gB;
+
+    // Filters sit between sound sources and deck gains
+    const fA = ctx.createBiquadFilter(); fA.type = 'allpass';
+    const fB = ctx.createBiquadFilter(); fB.type = 'allpass';
+    filterARef.current = fA; filterBRef.current = fB;
+    fA.connect(gA); fB.connect(gB);
     gA.connect(master); gB.connect(master);
 
     nextTimeARef.current = ctx.currentTime;
@@ -256,7 +293,7 @@ export const DjPage = () => {
         const pattern = BEAT_PATTERNS[track.genre] ?? BEAT_PATTERNS['House'];
         const freq = BASS_FREQS[track.id - 1];
         while (nextTimeARef.current < ctx.currentTime + 0.12) {
-          scheduleStep(ctx, gA, stepARef.current, nextTimeARef.current, pattern, freq);
+          scheduleStep(ctx, fA, stepARef.current, nextTimeARef.current, pattern, freq);
           stepARef.current = (stepARef.current + 1) % 16;
           nextTimeARef.current += stepTime;
         }
@@ -268,7 +305,7 @@ export const DjPage = () => {
         const pattern = BEAT_PATTERNS[track.genre] ?? BEAT_PATTERNS['House'];
         const freq = BASS_FREQS[track.id - 1];
         while (nextTimeBRef.current < ctx.currentTime + 0.12) {
-          scheduleStep(ctx, gB, stepBRef.current, nextTimeBRef.current, pattern, freq);
+          scheduleStep(ctx, fB, stepBRef.current, nextTimeBRef.current, pattern, freq);
           stepBRef.current = (stepBRef.current + 1) % 16;
           nextTimeBRef.current += stepTime;
         }
@@ -285,21 +322,30 @@ export const DjPage = () => {
     ctxRef.current?.close();
   }, []);
 
-  // ── Patch activity log ───────────────────────────────────────────────────
-  const [patchLog, setPatchLog] = useState<PatchEntry[]>([]);
+  // ── Filter effects ────────────────────────────────────────────────────────
+  useEffect(() => {
+    const f = filterARef.current; const ctx = ctxRef.current; if (!f || !ctx) return;
+    if (s.effectA === 'low') { f.type = 'lowpass';  f.frequency.setTargetAtTime(500,  ctx.currentTime, 0.2); }
+    else if (s.effectA === 'high') { f.type = 'highpass'; f.frequency.setTargetAtTime(1400, ctx.currentTime, 0.2); }
+    else f.type = 'allpass';
+  }, [s.effectA]);
+
+  useEffect(() => {
+    const f = filterBRef.current; const ctx = ctxRef.current; if (!f || !ctx) return;
+    if (s.effectB === 'low') { f.type = 'lowpass';  f.frequency.setTargetAtTime(500,  ctx.currentTime, 0.2); }
+    else if (s.effectB === 'high') { f.type = 'highpass'; f.frequency.setTargetAtTime(1400, ctx.currentTime, 0.2); }
+    else f.type = 'allpass';
+  }, [s.effectB]);
+
+  // ── Activity log ──────────────────────────────────────────────────────────
+  const [activityLog, setActivityLog] = useState<Array<{ time: string; text: string }>>([]);
   const prevStateRef = useRef(s);
 
   useEffect(() => {
-    const prev = prevStateRef.current as Record<string, unknown>;
-    const curr = s as unknown as Record<string, unknown>;
-    const changed = Object.keys(curr).filter(k => prev[k] !== curr[k]);
-    if (changed.length > 0) {
-      const fields = changed.map(k => {
-        const v = curr[k];
-        return `${k}=${typeof v === 'string' ? `"${v}"` : v}`;
-      }).join('  ');
+    const text = describeChanges(prevStateRef.current, s);
+    if (text) {
       const time = new Date().toLocaleTimeString('en-US', { hour12: false });
-      setPatchLog(log => [{ time, fields }, ...log].slice(0, 30));
+      setActivityLog(log => [{ time, text }, ...log].slice(0, 5));
     }
     prevStateRef.current = s;
   }, [s]);
@@ -307,27 +353,35 @@ export const DjPage = () => {
   // ── Autonomous AI loop ───────────────────────────────────────────────────
   const aiTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const callAi = useCallback(async () => {
-    if (!sessionId) return;
-    const snapshot = snapshotRegistry.getAll();
+  const buildPrompt = useCallback((instruction?: string) => {
     const trackList = TRACKS.map(t => `${t.id}=${t.title}(${t.bpm}bpm,${t.genre})`).join(',');
-    const deckATrack = TRACKS.find(t => t.id === s.deckATrackId);
-    const deckBTrack = TRACKS.find(t => t.id === s.deckBTrackId);
-    const prompt =
-      `You are an autonomous AI DJ. Available tracks: ${trackList}. ` +
-      `Deck A: "${deckATrack?.title}" ${s.deckAPlaying ? 'PLAYING' : 'STOPPED'}. ` +
-      `Deck B: "${deckBTrack?.title}" ${s.deckBPlaying ? 'PLAYING' : 'STOPPED'}. ` +
-      `Crossfader: ${s.crossfader} (0=full A, 100=full B). VolumeA: ${s.volumeA}. VolumeB: ${s.volumeB}. ` +
-      `Make a creative DJ decision — blend decks, transition tracks, build energy, or drop. ` +
-      `Patch any of: deckATrackId(1-8), deckAPlaying(bool), deckBTrackId(1-8), deckBPlaying(bool), ` +
-      `crossfader(0-100), volumeA(0-100), volumeB(0-100), djNote(string). ` +
-      `Never leave both decks stopped. Make smooth transitions.`;
+    const tA = TRACKS.find(t => t.id === s.deckATrackId);
+    const tB = TRACKS.find(t => t.id === s.deckBTrackId);
+    const state = `Deck A: "${tA?.title}" ${s.deckAPlaying ? 'PLAYING' : 'STOPPED'}, effectA=${s.effectA}. ` +
+      `Deck B: "${tB?.title}" ${s.deckBPlaying ? 'PLAYING' : 'STOPPED'}, effectB=${s.effectB}. ` +
+      `Crossfader: ${s.crossfader} (0=full A, 100=full B). VolumeA: ${s.volumeA}. VolumeB: ${s.volumeB}.`;
+    const patchable = `Patch any of: deckATrackId(1-8), deckAPlaying(bool), deckBTrackId(1-8), deckBPlaying(bool), ` +
+      `crossfader(0-100), volumeA(0-100), volumeB(0-100), ` +
+      `effectA('off'/'low'/'high'), effectB('off'/'low'/'high'), djNote(short string). ` +
+      `Never leave both decks stopped.`;
+    if (instruction) {
+      return `You are an AI DJ. Available tracks: ${trackList}. ${state} INSTRUCTION: ${instruction} ${patchable}`;
+    }
+    return `You are an autonomous AI DJ. Available tracks: ${trackList}. ${state} ` +
+      `Make a creative DJ decision — blend, transition, build energy, or drop. ${patchable}`;
+  }, [s]);
+
+  const sendPrompt = useCallback(async (prompt: string) => {
+    if (!sessionId) return;
     await fetch(`${serverUrl}/ai/prompt`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sessionId, prompt, snapshot, currentUrl: window.location.href }),
+      body: JSON.stringify({ sessionId, prompt, snapshot: snapshotRegistry.getAll(), currentUrl: window.location.href }),
     });
-  }, [sessionId, serverUrl, s]);
+  }, [sessionId, serverUrl]);
+
+  const callAi = useCallback(() => sendPrompt(buildPrompt()), [sendPrompt, buildPrompt]);
+  const triggerMood = useCallback((instruction: string) => sendPrompt(buildPrompt(instruction)), [sendPrompt, buildPrompt]);
 
   const callAiRef = useRef(callAi);
   useEffect(() => { callAiRef.current = callAi; }, [callAi]);
@@ -349,10 +403,14 @@ export const DjPage = () => {
     return () => { if (aiTimerRef.current) clearTimeout(aiTimerRef.current); };
   }, [sessionId, scheduleAiCall]);
 
-  const btnStyle = (active: boolean): React.CSSProperties => ({
-    padding: '5px 14px', border: `1px solid ${active ? '#00e676' : '#555'}`,
-    background: 'transparent', color: active ? '#00e676' : '#999',
-    fontFamily: 'monospace', fontSize: 11, letterSpacing: 1, cursor: 'pointer', borderRadius: 2,
+  // Consistent button base style — fixed height prevents layout shift
+  const btn = (active: boolean, accent = '#00e676'): React.CSSProperties => ({
+    height: 28, padding: '0 14px',
+    border: `1px solid ${active ? accent : '#444'}`,
+    background: active ? `${accent}18` : 'transparent',
+    color: active ? accent : '#888',
+    fontFamily: 'monospace', fontSize: 11, letterSpacing: 1,
+    cursor: 'pointer', borderRadius: 2, whiteSpace: 'nowrap',
   });
 
   // ── Render ───────────────────────────────────────────────────────────────
@@ -366,11 +424,10 @@ export const DjPage = () => {
         <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#00e676', boxShadow: '0 0 6px #00e676' }} />
         <span style={{ fontFamily: 'monospace', fontSize: 11, letterSpacing: 2, color: '#777' }}>AUTONOMOUS</span>
         <div style={{ flex: 1 }} />
-        {!audioOn ? (
-          <button onClick={startAudio} style={btnStyle(true)}>▶ AUDIO</button>
-        ) : (
-          <button onClick={toggleMute} style={btnStyle(!muted)}>{muted ? '🔇 MUTED' : '♫ AUDIO ON'}</button>
-        )}
+        {!audioOn
+          ? <button onClick={startAudio} style={btn(true)}>AUDIO ON</button>
+          : <button onClick={toggleMute} style={btn(!muted)}>{muted ? 'MUTED' : 'AUDIO ON'}</button>
+        }
       </div>
 
       {/* Decks + Mixer */}
@@ -380,32 +437,26 @@ export const DjPage = () => {
         {/* Mixer column */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: '16px 14px', background: '#0d0d0d', border: '1px solid #2a2a2a', borderRadius: 4, alignSelf: 'stretch', justifyContent: 'center', minWidth: 110 }}>
           <span style={{ fontFamily: 'monospace', fontSize: 10, letterSpacing: 3, color: '#777' }}>MIXER</span>
-
-          {/* Volume faders */}
-          <div style={{ display: 'flex', gap: 24, alignItems: 'flex-end' }}>
-            {([['A', s.volumeA], ['B', s.volumeB]] as [string, number][]).map(([lbl, vol]) => (
-              <div key={lbl} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                <span style={{ fontFamily: 'monospace', fontSize: 10, color: '#999' }}>{vol}</span>
-                <div style={{ position: 'relative', width: 12, height: 80 }}>
-                  <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 2, background: '#2a2a2a', transform: 'translateX(-50%)' }} />
-                  <div style={{ position: 'absolute', left: 0, right: 0, height: 10, top: `${100 - vol}%`, background: '#ccc', border: '1px solid #666', borderRadius: 1, transition: 'top 0.4s' }} />
+          <div style={{ display: 'flex', gap: 24 }}>
+            {(['A', 'B'] as const).map(lbl => {
+              const vol = lbl === 'A' ? s.volumeA : s.volumeB;
+              return (
+                <div key={lbl} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <span style={{ fontFamily: 'monospace', fontSize: 10, color: '#999' }}>{vol}</span>
+                  <div style={{ position: 'relative', width: 12, height: 80 }}>
+                    <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 2, background: '#2a2a2a', transform: 'translateX(-50%)' }} />
+                    <div style={{ position: 'absolute', left: 0, right: 0, height: 10, top: `${100 - vol}%`, background: '#ccc', border: '1px solid #666', borderRadius: 1, transition: 'top 0.4s' }} />
+                  </div>
+                  <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#aaa', fontWeight: 'bold' }}>{lbl}</span>
                 </div>
-                <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#aaa', letterSpacing: 1, fontWeight: 'bold' }}>{lbl}</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
-
-          {/* Crossfader */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
             <span style={{ fontFamily: 'monospace', fontSize: 9, letterSpacing: 2, color: '#777' }}>XFADE</span>
             <div style={{ position: 'relative', width: 84, height: 18 }}>
               <div style={{ position: 'absolute', top: '50%', left: 4, right: 4, height: 2, background: '#2a2a2a', transform: 'translateY(-50%)', borderRadius: 1 }} />
-              <div style={{
-                position: 'absolute', top: '50%', left: `calc(${s.crossfader}% * 0.76)`,
-                transform: 'translate(-50%, -50%)', width: 18, height: 18,
-                background: '#ccc', border: '1px solid #666', borderRadius: 2,
-                transition: 'left 0.4s ease',
-              }} />
+              <div style={{ position: 'absolute', top: '50%', left: `calc(${s.crossfader}% * 0.76)`, transform: 'translate(-50%,-50%)', width: 18, height: 18, background: '#ccc', border: '1px solid #666', borderRadius: 2, transition: 'left 0.4s ease' }} />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', width: 84 }}>
               <span style={{ fontFamily: 'monospace', fontSize: 10, color: s.crossfader < 40 ? '#00e676' : '#777' }}>A</span>
@@ -417,28 +468,56 @@ export const DjPage = () => {
         <Deck side="B" trackId={s.deckBTrackId} playing={s.deckBPlaying} volume={s.volumeB} />
       </div>
 
-      {/* AI note — truncated to one line */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 4, borderTop: '1px solid #1e1e1e' }}>
-        <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#00e676', letterSpacing: 2, flexShrink: 0 }}>♫</span>
+      {/* Mood + Filter controls */}
+      <div style={{ borderTop: '1px solid #1e1e1e', paddingTop: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {/* Mood row */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <span style={{ fontFamily: 'monospace', fontSize: 10, color: '#777', letterSpacing: 2, width: 50 }}>MOOD</span>
+          {MOODS.map(m => (
+            <button key={m.label} onClick={() => triggerMood(m.instruction)} style={btn(false, '#a78bfa')}>
+              {m.label}
+            </button>
+          ))}
+        </div>
+        {/* Filter row */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <span style={{ fontFamily: 'monospace', fontSize: 10, color: '#777', letterSpacing: 2, width: 50 }}>FX</span>
+          {(['A','B'] as const).map(deck => {
+            const effect = deck === 'A' ? s.effectA : s.effectB;
+            return (['off','low','high'] as const).map(fx => (
+              <button
+                key={`${deck}-${fx}`}
+                style={btn(effect === fx && fx !== 'off', '#f59e0b')}
+                onClick={() => triggerMood(`Set effect${deck} to '${fx}' (${fx === 'low' ? 'lowpass/bass boost' : fx === 'high' ? 'highpass/hi-cut' : 'no filter'}) on Deck ${deck}.`)}
+              >
+                {deck} {fx === 'off' ? 'FLAT' : fx === 'low' ? 'BASS' : 'HI-CUT'}
+              </button>
+            ));
+          })}
+        </div>
+      </div>
+
+      {/* AI note */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, borderTop: '1px solid #1e1e1e', paddingTop: 10 }}>
+        <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#00e676', flexShrink: 0 }}>♫</span>
         <span style={{ fontFamily: 'monospace', fontSize: 12, color: '#aaa', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
           {s.djNote.length > 90 ? s.djNote.slice(0, 87) + '…' : s.djNote}
         </span>
       </div>
 
-      {/* Patch stream */}
+      {/* Activity log — human-readable, last 5 actions */}
       <div style={{ borderTop: '1px solid #1e1e1e', paddingTop: 12 }}>
-        <div style={{ fontFamily: 'monospace', fontSize: 10, letterSpacing: 2, color: '#777', marginBottom: 8 }}>AI PATCHES</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxHeight: 110, overflowY: 'auto' }}>
-          {patchLog.length === 0 ? (
-            <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#666' }}>waiting for AI…</span>
-          ) : patchLog.map((entry, i) => (
-            <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'baseline' }}>
-              <span style={{ fontFamily: 'monospace', fontSize: 10, color: '#777', flexShrink: 0 }}>{entry.time}</span>
-              <span style={{ fontFamily: 'monospace', fontSize: 11, color: i === 0 ? '#00e676' : '#888', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                {entry.fields}
-              </span>
-            </div>
-          ))}
+        <div style={{ fontFamily: 'monospace', fontSize: 10, letterSpacing: 2, color: '#777', marginBottom: 8 }}>ACTIVITY</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+          {activityLog.length === 0
+            ? <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#666' }}>waiting for AI…</span>
+            : activityLog.map((entry, i) => (
+              <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'baseline' }}>
+                <span style={{ fontFamily: 'monospace', fontSize: 10, color: '#777', flexShrink: 0 }}>{entry.time}</span>
+                <span style={{ fontFamily: 'monospace', fontSize: 12, color: i === 0 ? '#00e676' : '#999' }}>{entry.text}</span>
+              </div>
+            ))
+          }
         </div>
       </div>
 
