@@ -143,21 +143,21 @@ const Deck = ({ side, trackId, playing, volume }: { side: 'A' | 'B'; trackId: nu
   const track = TRACKS.find(t => t.id === trackId) ?? TRACKS[0];
   const color = TRACK_COLORS[(trackId - 1) % TRACK_COLORS.length];
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, padding: '18px 14px', background: '#0d0d0d', border: `1px solid ${playing ? '#222' : '#181818'}`, borderRadius: 4, width: 210 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, padding: '18px 16px', background: '#0d0d0d', border: `1px solid ${playing ? '#333' : '#1e1e1e'}`, borderRadius: 4, width: 220 }}>
       <div style={{ alignSelf: 'stretch', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontFamily: 'monospace', fontSize: 9, letterSpacing: 3, color: playing ? color : '#333', fontWeight: 'bold' }}>DECK {side}</span>
-        <span style={{ fontFamily: 'monospace', fontSize: 9, color: playing ? '#00e676' : '#2a2a2a' }}>{playing ? '▶ PLAYING' : '■ STOPPED'}</span>
+        <span style={{ fontFamily: 'monospace', fontSize: 11, letterSpacing: 3, color: playing ? color : '#555', fontWeight: 'bold' }}>DECK {side}</span>
+        <span style={{ fontFamily: 'monospace', fontSize: 11, color: playing ? '#00e676' : '#555' }}>{playing ? '▶' : '■'}</span>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
         <Vinyl playing={playing} trackId={trackId} />
         <VuMeter playing={playing} volume={volume} />
       </div>
-      <div style={{ alignSelf: 'stretch', borderTop: '1px solid #181818', paddingTop: 10, display: 'flex', flexDirection: 'column', gap: 3 }}>
-        <div style={{ fontFamily: 'monospace', fontSize: 11, color: '#ddd', fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{track.title}</div>
-        <div style={{ fontFamily: 'monospace', fontSize: 9, color: '#555' }}>{track.artist}</div>
+      <div style={{ alignSelf: 'stretch', borderTop: '1px solid #1e1e1e', paddingTop: 10, display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <div style={{ fontFamily: 'monospace', fontSize: 14, color: '#eee', fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{track.title}</div>
+        <div style={{ fontFamily: 'monospace', fontSize: 11, color: '#888' }}>{track.artist}</div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
-          <span style={{ fontFamily: 'monospace', fontSize: 9, color: color }}>{track.genre}</span>
-          <span style={{ fontFamily: 'monospace', fontSize: 9, color: '#444' }}>{track.bpm} BPM</span>
+          <span style={{ fontFamily: 'monospace', fontSize: 11, color: color }}>{track.genre}</span>
+          <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#777' }}>{track.bpm} BPM</span>
         </div>
       </div>
     </div>
@@ -193,9 +193,11 @@ export const DjPage = () => {
 
   // ── Audio engine ─────────────────────────────────────────────────────────
   const [audioOn, setAudioOn] = useState(false);
+  const [muted, setMuted] = useState(false);
   const ctxRef = useRef<AudioContext | null>(null);
   const gainARef = useRef<GainNode | null>(null);
   const gainBRef = useRef<GainNode | null>(null);
+  const masterGainRef = useRef<GainNode | null>(null);
   const schedulerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stepARef = useRef(0); const nextTimeARef = useRef(0);
   const stepBRef = useRef(0); const nextTimeBRef = useRef(0);
@@ -220,14 +222,27 @@ export const DjPage = () => {
   useEffect(() => { if (s.deckAPlaying) nextTimeARef.current = ctxRef.current?.currentTime ?? 0; }, [s.deckAPlaying]);
   useEffect(() => { if (s.deckBPlaying) nextTimeBRef.current = ctxRef.current?.currentTime ?? 0; }, [s.deckBPlaying]);
 
+  const toggleMute = useCallback(() => {
+    const master = masterGainRef.current;
+    const ctx = ctxRef.current;
+    if (!master || !ctx) return;
+    const next = !muted;
+    master.gain.setTargetAtTime(next ? 0 : 1, ctx.currentTime, 0.05);
+    setMuted(next);
+  }, [muted]);
+
   const startAudio = useCallback(() => {
     const ctx = new AudioContext();
     ctxRef.current = ctx;
 
+    const master = ctx.createGain(); master.gain.value = 1;
+    masterGainRef.current = master;
+    master.connect(ctx.destination);
+
     const gA = ctx.createGain(); gA.gain.value = stateRef.current.volumeA / 100;
     const gB = ctx.createGain(); gB.gain.value = 0;
     gainARef.current = gA; gainBRef.current = gB;
-    gA.connect(ctx.destination); gB.connect(ctx.destination);
+    gA.connect(master); gB.connect(master);
 
     nextTimeARef.current = ctx.currentTime;
     nextTimeBRef.current = ctx.currentTime;
@@ -334,26 +349,27 @@ export const DjPage = () => {
     return () => { if (aiTimerRef.current) clearTimeout(aiTimerRef.current); };
   }, [sessionId, scheduleAiCall]);
 
+  const btnStyle = (active: boolean): React.CSSProperties => ({
+    padding: '5px 14px', border: `1px solid ${active ? '#00e676' : '#555'}`,
+    background: 'transparent', color: active ? '#00e676' : '#999',
+    fontFamily: 'monospace', fontSize: 11, letterSpacing: 1, cursor: 'pointer', borderRadius: 2,
+  });
+
   // ── Render ───────────────────────────────────────────────────────────────
   return (
     <div ref={djRef as React.Ref<HTMLDivElement>} style={{ padding: 24, background: '#080808', minHeight: '100%', display: 'flex', flexDirection: 'column', gap: 18 }}>
       <style>{`@keyframes vinyl-spin { to { transform: rotate(360deg); } }`}</style>
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <span style={{ fontFamily: 'monospace', fontSize: 11, fontWeight: 'bold', letterSpacing: 4, color: '#eee' }}>AI DJ</span>
-        <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#00e676', boxShadow: '0 0 6px #00e676' }} />
-        <span style={{ fontFamily: 'monospace', fontSize: 9, letterSpacing: 2, color: '#333' }}>AUTONOMOUS</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <span style={{ fontFamily: 'monospace', fontSize: 13, fontWeight: 'bold', letterSpacing: 4, color: '#eee' }}>AI DJ</span>
+        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#00e676', boxShadow: '0 0 6px #00e676' }} />
+        <span style={{ fontFamily: 'monospace', fontSize: 11, letterSpacing: 2, color: '#777' }}>AUTONOMOUS</span>
         <div style={{ flex: 1 }} />
         {!audioOn ? (
-          <button
-            onClick={startAudio}
-            style={{ padding: '5px 14px', border: '1px solid #00e676', background: 'transparent', color: '#00e676', fontFamily: 'monospace', fontSize: 9, letterSpacing: 2, cursor: 'pointer', borderRadius: 2 }}
-          >
-            ▶ ENABLE AUDIO
-          </button>
+          <button onClick={startAudio} style={btnStyle(true)}>▶ AUDIO</button>
         ) : (
-          <span style={{ fontFamily: 'monospace', fontSize: 9, color: '#00e67688', letterSpacing: 2 }}>♫ AUDIO ON</span>
+          <button onClick={toggleMute} style={btnStyle(!muted)}>{muted ? '🔇 MUTED' : '♫ AUDIO ON'}</button>
         )}
       </div>
 
@@ -362,38 +378,38 @@ export const DjPage = () => {
         <Deck side="A" trackId={s.deckATrackId} playing={s.deckAPlaying} volume={s.volumeA} />
 
         {/* Mixer column */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: '16px 12px', background: '#0d0d0d', border: '1px solid #181818', borderRadius: 4, alignSelf: 'stretch', justifyContent: 'center', minWidth: 100 }}>
-          <span style={{ fontFamily: 'monospace', fontSize: 8, letterSpacing: 3, color: '#2a2a2a' }}>MIXER</span>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: '16px 14px', background: '#0d0d0d', border: '1px solid #2a2a2a', borderRadius: 4, alignSelf: 'stretch', justifyContent: 'center', minWidth: 110 }}>
+          <span style={{ fontFamily: 'monospace', fontSize: 10, letterSpacing: 3, color: '#777' }}>MIXER</span>
 
           {/* Volume faders */}
-          <div style={{ display: 'flex', gap: 20, alignItems: 'flex-end' }}>
+          <div style={{ display: 'flex', gap: 24, alignItems: 'flex-end' }}>
             {([['A', s.volumeA], ['B', s.volumeB]] as [string, number][]).map(([lbl, vol]) => (
               <div key={lbl} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                <span style={{ fontFamily: 'monospace', fontSize: 8, color: '#333' }}>{vol}</span>
-                <div style={{ position: 'relative', width: 10, height: 72 }}>
-                  <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 2, background: '#181818', transform: 'translateX(-50%)' }} />
-                  <div style={{ position: 'absolute', left: 0, right: 0, height: 8, top: `${100 - vol}%`, background: '#aaa', border: '1px solid #555', borderRadius: 1, transition: 'top 0.4s' }} />
+                <span style={{ fontFamily: 'monospace', fontSize: 10, color: '#999' }}>{vol}</span>
+                <div style={{ position: 'relative', width: 12, height: 80 }}>
+                  <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 2, background: '#2a2a2a', transform: 'translateX(-50%)' }} />
+                  <div style={{ position: 'absolute', left: 0, right: 0, height: 10, top: `${100 - vol}%`, background: '#ccc', border: '1px solid #666', borderRadius: 1, transition: 'top 0.4s' }} />
                 </div>
-                <span style={{ fontFamily: 'monospace', fontSize: 8, color: '#333', letterSpacing: 1 }}>{lbl}</span>
+                <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#aaa', letterSpacing: 1, fontWeight: 'bold' }}>{lbl}</span>
               </div>
             ))}
           </div>
 
           {/* Crossfader */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-            <span style={{ fontFamily: 'monospace', fontSize: 7, letterSpacing: 1, color: '#2a2a2a' }}>XFADE</span>
-            <div style={{ position: 'relative', width: 80, height: 16 }}>
-              <div style={{ position: 'absolute', top: '50%', left: 4, right: 4, height: 2, background: '#1e1e1e', transform: 'translateY(-50%)', borderRadius: 1 }} />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+            <span style={{ fontFamily: 'monospace', fontSize: 9, letterSpacing: 2, color: '#777' }}>XFADE</span>
+            <div style={{ position: 'relative', width: 84, height: 18 }}>
+              <div style={{ position: 'absolute', top: '50%', left: 4, right: 4, height: 2, background: '#2a2a2a', transform: 'translateY(-50%)', borderRadius: 1 }} />
               <div style={{
-                position: 'absolute', top: '50%', left: `calc(${s.crossfader}% * 0.75)`,
-                transform: 'translate(-50%, -50%)', width: 16, height: 16,
-                background: '#ccc', border: '1px solid #555', borderRadius: 2,
+                position: 'absolute', top: '50%', left: `calc(${s.crossfader}% * 0.76)`,
+                transform: 'translate(-50%, -50%)', width: 18, height: 18,
+                background: '#ccc', border: '1px solid #666', borderRadius: 2,
                 transition: 'left 0.4s ease',
               }} />
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', width: 80 }}>
-              <span style={{ fontFamily: 'monospace', fontSize: 7, color: s.crossfader < 40 ? '#00e676' : '#2a2a2a' }}>A</span>
-              <span style={{ fontFamily: 'monospace', fontSize: 7, color: s.crossfader > 60 ? '#00e676' : '#2a2a2a' }}>B</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', width: 84 }}>
+              <span style={{ fontFamily: 'monospace', fontSize: 10, color: s.crossfader < 40 ? '#00e676' : '#777' }}>A</span>
+              <span style={{ fontFamily: 'monospace', fontSize: 10, color: s.crossfader > 60 ? '#00e676' : '#777' }}>B</span>
             </div>
           </div>
         </div>
@@ -401,43 +417,47 @@ export const DjPage = () => {
         <Deck side="B" trackId={s.deckBTrackId} playing={s.deckBPlaying} volume={s.volumeB} />
       </div>
 
-      {/* AI note */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingTop: 4, borderTop: '1px solid #141414' }}>
-        <span style={{ fontFamily: 'monospace', fontSize: 8, color: '#00e676', letterSpacing: 2, flexShrink: 0 }}>♫ AI</span>
-        <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#555', fontStyle: 'italic' }}>{s.djNote}</span>
+      {/* AI note — truncated to one line */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 4, borderTop: '1px solid #1e1e1e' }}>
+        <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#00e676', letterSpacing: 2, flexShrink: 0 }}>♫</span>
+        <span style={{ fontFamily: 'monospace', fontSize: 12, color: '#aaa', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+          {s.djNote.length > 90 ? s.djNote.slice(0, 87) + '…' : s.djNote}
+        </span>
       </div>
 
-      {/* Patch activity log */}
-      <div style={{ borderTop: '1px solid #111', paddingTop: 12 }}>
-        <div style={{ fontFamily: 'monospace', fontSize: 8, letterSpacing: 2, color: '#282828', marginBottom: 8 }}>AI PATCH STREAM</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 3, maxHeight: 120, overflowY: 'auto' }}>
+      {/* Patch stream */}
+      <div style={{ borderTop: '1px solid #1e1e1e', paddingTop: 12 }}>
+        <div style={{ fontFamily: 'monospace', fontSize: 10, letterSpacing: 2, color: '#777', marginBottom: 8 }}>AI PATCHES</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxHeight: 110, overflowY: 'auto' }}>
           {patchLog.length === 0 ? (
-            <span style={{ fontFamily: 'monospace', fontSize: 9, color: '#222' }}>waiting for AI…</span>
+            <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#666' }}>waiting for AI…</span>
           ) : patchLog.map((entry, i) => (
-            <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'baseline' }}>
-              <span style={{ fontFamily: 'monospace', fontSize: 8, color: '#333', flexShrink: 0 }}>{entry.time}</span>
-              <span style={{ fontFamily: 'monospace', fontSize: 9, color: i === 0 ? '#00e676' : '#3a3a3a' }}>{entry.fields}</span>
+            <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'baseline' }}>
+              <span style={{ fontFamily: 'monospace', fontSize: 10, color: '#777', flexShrink: 0 }}>{entry.time}</span>
+              <span style={{ fontFamily: 'monospace', fontSize: 11, color: i === 0 ? '#00e676' : '#888', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                {entry.fields}
+              </span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Track library */}
-      <div style={{ borderTop: '1px solid #111', paddingTop: 12 }}>
-        <div style={{ fontFamily: 'monospace', fontSize: 8, letterSpacing: 2, color: '#282828', marginBottom: 8 }}>LIBRARY</div>
+      {/* Library */}
+      <div style={{ borderTop: '1px solid #1e1e1e', paddingTop: 12 }}>
+        <div style={{ fontFamily: 'monospace', fontSize: 10, letterSpacing: 2, color: '#777', marginBottom: 8 }}>LIBRARY</div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
           {TRACKS.map(t => {
             const onA = s.deckATrackId === t.id, onB = s.deckBTrackId === t.id;
             const color = TRACK_COLORS[(t.id - 1) % TRACK_COLORS.length];
             return (
-              <div key={t.id} style={{ padding: '4px 10px', border: `1px solid ${onA || onB ? color : '#181818'}`, borderRadius: 2, background: onA || onB ? `${color}0d` : 'transparent', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 5, height: 5, borderRadius: '50%', background: onA || onB ? color : '#222' }} />
+              <div key={t.id} style={{ padding: '5px 12px', border: `1px solid ${onA || onB ? color : '#333'}`, borderRadius: 2, background: onA || onB ? `${color}15` : 'transparent', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: onA || onB ? color : '#555' }} />
                 <div>
-                  <div style={{ fontFamily: 'monospace', fontSize: 9, color: '#bbb' }}>{t.title}</div>
-                  <div style={{ fontFamily: 'monospace', fontSize: 8, color: '#3a3a3a' }}>{t.bpm} · {t.genre}</div>
+                  <div style={{ fontFamily: 'monospace', fontSize: 12, color: '#ddd' }}>{t.title}</div>
+                  <div style={{ fontFamily: 'monospace', fontSize: 10, color: '#888' }}>{t.bpm} · {t.genre}</div>
                 </div>
-                {onA && <span style={{ fontFamily: 'monospace', fontSize: 7, color: color }}>A</span>}
-                {onB && <span style={{ fontFamily: 'monospace', fontSize: 7, color: color }}>B</span>}
+                {onA && <span style={{ fontFamily: 'monospace', fontSize: 10, color: color, fontWeight: 'bold' }}>A</span>}
+                {onB && <span style={{ fontFamily: 'monospace', fontSize: 10, color: color, fontWeight: 'bold' }}>B</span>}
               </div>
             );
           })}
