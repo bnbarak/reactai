@@ -36,6 +36,13 @@ const PROMPT_GROUPS: Array<{ page: string; prompts: string[] }> = [
       'Go to Chess tab and set the AI to 2200 level',
     ],
   },
+  {
+    page: 'DJ',
+    prompts: [
+      'Go to DJ tab and drop a hard techno transition',
+      'Go to DJ tab and blend into a deep house vibe',
+    ],
+  },
 ];
 
 export const ChatPanel = () => {

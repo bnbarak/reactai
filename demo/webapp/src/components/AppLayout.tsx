@@ -4,12 +4,14 @@ import { reactAI } from '@bnbarak/reactai/react';
 import { useAiMarker } from '@bnbarak/reactai/react';
 import { SearchPage } from '../pages/SearchPage.js';
 import { ChessPage } from '../pages/ChessPage.js';
+import { DjPage } from '../pages/DjPage.js';
 
-type Page = 'search' | 'chess';
+type Page = 'search' | 'chess' | 'dj';
 
 const PAGE_LABELS: Record<Page, string> = {
   search: 'Search',
   chess: 'Chess',
+  dj: 'DJ',
 };
 
 /**
@@ -67,7 +69,7 @@ const AppLayoutInner = ({ activePage }: AppLayoutProps) => {
             transition={{ duration: 0.2, ease: 'easeOut' }}
             style={{ position: 'absolute', inset: 0, overflowY: 'auto' }}
           >
-            {page === 'chess' ? <ChessPage /> : <SearchPage />}
+            {page === 'chess' ? <ChessPage /> : page === 'dj' ? <DjPage /> : <SearchPage />}
           </motion.div>
         </AnimatePresence>
       </div>
